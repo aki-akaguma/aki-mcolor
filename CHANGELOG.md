@@ -2,6 +2,12 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.12 (2021-02-16)
+=====
+Feature:
+
+* fix doc: color image
+
 0.1.11 (2021-02-16)
 =====
 Feature:
