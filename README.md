@@ -63,7 +63,7 @@ and install **.deb** into your local repository of debian package.
 
 #### Command line example 1
 
-Makes `ca` red and `b` green in standard input text.
+Makes "`ca`" **red** and "`b`" **green** in standard input text.
 
 ```
 echo "abcabca" | aki-mcolor -r "ca" -g "b"
@@ -77,6 +77,8 @@ result output :
 
 
 #### Command line example 2
+
+Extract "`arm`" from the rustup target list and make "`musl`" **green** and "`android`" **cyan**.
 
 ```
 rustup target list | aki-mline -e arm | aki-mcolor -g "musl" -c "android"
