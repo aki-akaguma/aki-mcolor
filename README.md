@@ -47,5 +47,4 @@ result output:
 ```text
 ab<span style="color:red;">ca</span>b<span style="color:red;">ca</span>
 ```
-
 ![out1](https://github.com/aki-akaguma/aki-mcolor/blob/main/img/result-out-abcabca-1.svg)
