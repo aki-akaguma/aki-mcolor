@@ -31,21 +31,39 @@
 //!
 //! # Examples
 //!
-//! command line:
+//! ### Command line example 1
+//!
+//! Makes `ca` red and `b` green in standard input text.
+//!
 //! ```text
-//! echo "abcabca" | aki-mcolor -r "ca"
+//! echo "abcabca" | aki-mcolor -r "ca" -g "b"
 //! ```
 //!
-//! result output:
+//! result output :
+//!
+//! ![out abcabca image]
+//!
+//! [out abcabca image]: https://raw.githubusercontent.com/aki-akaguma/aki-mcolor/main/img/out-abcabca-1.png
+//!
+//!
+//! ### Command line example 2
+//! 
 //! ```text
-//! ab<span style="color:red;">ca</span>b<span style="color:red;">ca</span>
+//! rustup target list | aki-mline -e arm | aki-mcolor -g "musl" -c "android"
 //! ```
-//! [result out image]
+//! 
+//! result output :
+//! 
+//! ![out rustup image]
+//! 
+//! [out rustup image]: https://raw.githubusercontent.com/aki-akaguma/aki-mcolor/main/img/out-rustup-1.png
+//!
+//!
+//! ### Library example
 //!
 //! See [`fn execute()`] for this library examples.
 //!
 //! [`fn execute()`]: crate::execute
-//! [result out image]: https://github.com/aki-akaguma/aki-mcolor/blob/main/img/result-out-abcabca-1.png
 //!
 
 #[macro_use]
