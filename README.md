@@ -44,6 +44,6 @@ echo "abcabca" | aki-mcolor -r "ca"
 ```
 
 result output:
-```html
-ab<span style="color:red;">ca</span>b<span style="color:red;">ca</span>
-```
+
+`ab`<span style="color:red;">`ca`</span>`b`<span style="color:red;">`ca`</span>
+
