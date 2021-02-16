@@ -1,7 +1,7 @@
 //
 //use flood_tide::parse_simple_gnu_style;
 use flood_tide::HelpVersion;
-use flood_tide::{Arg, NameVal, Opt, OptNum, Lex};
+use flood_tide::{Arg, Lex, NameVal, Opt, OptNum};
 use flood_tide::{OptParseError, OptParseErrors};
 
 use crate::conf::CmdOptConf;
@@ -51,7 +51,13 @@ fn help_message(program: &str) -> String {
 //----------------------------------------------------------------------
 fn parse_match(conf: &mut CmdOptConf, nv: &NameVal<'_>) -> Result<(), OptParseError> {
     match CmdOP::from(nv.opt.num) {
-        CmdOP::Red | CmdOP::Green | CmdOP::Blue | CmdOP::Cyan | CmdOP::Magenda | CmdOP::Yellow | CmdOP::Unmark => {
+        CmdOP::Red
+        | CmdOP::Green
+        | CmdOP::Blue
+        | CmdOP::Cyan
+        | CmdOP::Magenda
+        | CmdOP::Yellow
+        | CmdOP::Unmark => {
             let col = match CmdOP::from(nv.opt.num) {
                 CmdOP::Red => Color::Red,
                 CmdOP::Green => Color::Green,
@@ -115,7 +121,7 @@ where
     let mut v: Vec<String> = Vec::new();
     v.extend(tokens.free.iter().map(|&s| s.to_string()));
     //
-    return (Some(v), Err(errs));
+    (Some(v), Err(errs))
 }
 
 pub fn parse_cmdopts(program: &str, args: &[&str]) -> Result<CmdOptConf, OptParseErrors> {

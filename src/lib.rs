@@ -1,12 +1,12 @@
 //!
-//! the substitude text program.
+//! the mark up text with color program.
 //!
 //! ```text
 //! Usage:
 //!   aki-mcolor [options]
-//! 
+//!
 //! color marker by rust lang.
-//! 
+//!
 //! Options:
 //!   -r, --red <exp>      regular expression, mark color is red
 //!   -g, --green <exp>    regular expression, mark color is green
@@ -15,10 +15,10 @@
 //!   -m, --magenda <exp>  regular expression, mark color is magenda
 //!   -y, --yellow <exp>   regular expression, mark color is yellow
 //!   -u, --unmark <exp>   regular expression, unmark color
-//! 
+//!
 //!   -H, --help     display this help and exit
 //!   -V, --version  display version information and exit
-//! 
+//!
 //! Env:
 //!   RUST_MCOLOR_RED_ST     red start sequence
 //!   RUST_MCOLOR_GREEN_ST   greep start sequence
@@ -28,6 +28,22 @@
 //!   RUST_MCOLOR_YELLOW_ST  yellow start sequence
 //!   RUST_MCOLOR_ED         color end sequence
 //! ```
+//!
+//! # Examples
+//!
+//! command line:
+//! ```text
+//! echo "abcabca" | aki-mcolor -r "ca"
+//! ```
+//!
+//! result output:
+//! ```text
+//! ab<span style="color:red;">ca</span>b<span style="color:red;">ca</span>
+//! ```
+//!
+//! See [`fn execute()`] for this library examples.
+//!
+//! [`fn execute()`]: crate::execute
 //!
 
 #[macro_use]
@@ -58,24 +74,23 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// example:
 ///
 /// ```
-/// use runnel::medium::stdioe::{StreamInStdin,StreamOutStdout,StreamErrStderr};
 /// use runnel::StreamIoe;
+/// use runnel::medium::stdio::{StdErr, StdIn, StdOut};
 ///
-/// let r = libaki_mcolor::execute(&StreamIoe{
-///     sin: Box::new(StreamInStdin::default()),
-///     sout: Box::new(StreamOutStdout::default()),
-///     serr: Box::new(StreamErrStderr::default()),
+/// let r = libaki_mcolor::execute(&StreamIoe {
+///     pin: Box::new(StdIn::default()),
+///     pout: Box::new(StdOut::default()),
+///     perr: Box::new(StdErr::default()),
 /// }, "mcolor", &["-r", "Error", "-g", "Warn"]);
 /// ```
 ///
-pub fn execute(sioe: &StreamIoe, program: &str, args: &[&str]) -> anyhow::Result<()> {
-    //
-    let conf = match conf::parse_cmdopts(program, args) {
+pub fn execute(sioe: &StreamIoe, prog_name: &str, args: &[&str]) -> anyhow::Result<()> {
+    let conf = match conf::parse_cmdopts(prog_name, args) {
         Ok(conf) => conf,
         Err(errs) => {
             for err in errs.iter().take(1) {
                 if err.is_help() || err.is_version() {
-                    let _r = sioe.sout.lock().write_fmt(format_args!("{}\n", err));
+                    let _r = sioe.pout.lock().write_fmt(format_args!("{}\n", err));
                     return Ok(());
                 }
             }
