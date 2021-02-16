@@ -100,7 +100,8 @@ mod test_0 {
         assert_eq!(
             oup.stderr,
             concat!(
-                program_name!(), ": ",
+                program_name!(),
+                ": ",
                 "Missing option: r|g|b|c|m|y|u\n",
                 "Unexpected argument: \n",
                 try_help_msg!()

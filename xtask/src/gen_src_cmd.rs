@@ -9,9 +9,14 @@ pub fn do_gen_src() -> anyhow::Result<()> {
     //
     fix_type(&mut vec_optstr);
     //
-    let sss = gen_src_help(&vec_optstr, &vec_line, SrcHelpFlags {
-        cmd_opt_conf: false,
-        ..Default::default() })?;
+    let sss = gen_src_help(
+        &vec_optstr,
+        &vec_line,
+        SrcHelpFlags {
+            cmd_opt_conf: false,
+            ..Default::default()
+        },
+    )?;
     update_file(&sss, "src/conf/cmd.help.rs.txt")?;
     //
     //let sss = gen_src_match(&vec_optstr)?;

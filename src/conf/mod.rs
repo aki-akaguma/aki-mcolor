@@ -5,8 +5,7 @@ mod parse;
 use std::default::Default;
 use std::env;
 
-use regex;
-use self::regex::Regex;
+use regex::Regex;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq)]

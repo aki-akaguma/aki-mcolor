@@ -45,7 +45,11 @@ fn color_seq(conf: &CmdOptConf, color: Color) -> &str {
     }
 }
 
-fn do_match_proc(sioe: &StreamIoe, conf: &CmdOptConf, colregs: &[ColorAndRegex]) -> anyhow::Result<()> {
+fn do_match_proc(
+    sioe: &StreamIoe,
+    conf: &CmdOptConf,
+    colregs: &[ColorAndRegex],
+) -> anyhow::Result<()> {
     //let color_start_s = conf.opt_color_seq_red_start.as_str();
     let color_end_s = conf.opt_color_seq_end.as_str();
     /*
@@ -53,7 +57,7 @@ fn do_match_proc(sioe: &StreamIoe, conf: &CmdOptConf, colregs: &[ColorAndRegex])
     let color_end_s = "<E>";
     */
     //
-    for line in sioe.sin.lock().lines() {
+    for line in sioe.pin.lock().lines() {
         let line_s = line?;
         let line_ss = line_s.as_str();
         let line_len: usize = line_ss.len();
@@ -106,9 +110,9 @@ fn do_match_proc(sioe: &StreamIoe, conf: &CmdOptConf, colregs: &[ColorAndRegex])
                 color = line_color_mark[st];
             }
             //
-            sioe.sout.lock().write_fmt(format_args!("{}\n", out_s))?
+            sioe.pout.lock().write_fmt(format_args!("{}\n", out_s))?
         } else {
-            sioe.sout.lock().write_fmt(format_args!("{}\n", line_ss))?
+            sioe.pout.lock().write_fmt(format_args!("{}\n", line_ss))?
         }
     }
     //

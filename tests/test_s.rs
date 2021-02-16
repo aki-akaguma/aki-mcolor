@@ -65,19 +65,18 @@ macro_rules! do_execute {
     };
     ($args:expr, $sin:expr) => {{
         let sioe = StreamIoe {
-            sin: Box::new(StreamInStringIn::with_str($sin)),
-            sout: Box::new(StreamOutStringOut::default()),
-            serr: Box::new(StreamErrStringErr::default()),
+            pin: Box::new(StringIn::with_str($sin)),
+            pout: Box::new(StringOut::default()),
+            perr: Box::new(StringErr::default()),
         };
         let program = env!("CARGO_PKG_NAME");
         let r = execute(&sioe, &program, $args);
         match r {
             Ok(_) => {}
             Err(ref err) => {
-                let _ = sioe
-                    .serr
-                    .lock()
-                    .write_fmt(format_args!("{}: {}\n", program, err));
+                #[rustfmt::skip]
+                            let _ = sioe.perr.lock()
+                                .write_fmt(format_args!("{}: {}\n", program, err));
             }
         };
         (r, sioe)
@@ -86,17 +85,17 @@ macro_rules! do_execute {
 
 macro_rules! buff {
     ($sioe:expr, serr) => {
-        $sioe.serr.lock().buffer_str()
+        $sioe.perr.lock().buffer_str()
     };
     ($sioe:expr, sout) => {
-        $sioe.sout.lock().buffer_str()
+        $sioe.pout.lock().buffer_str()
     };
 }
 
 mod test_0 {
-    use runnel::medium::stringio::*;
-    use runnel::*;
     use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::*;
     use std::io::Write;
     //
     #[test]
@@ -146,80 +145,80 @@ mod test_0 {
 }
 
 mod test_1 {
-/*
-    use runnel::medium::stringio::*;
-    use runnel::*;
-    use libaki_mcolor::*;
-    use std::io::Write;
-    use std::collections::HashMap;
-    //
-    #[test]
-    fn test_red() {
-        let mut env: HashMap<String, String> = HashMap::new();
-        env.insert("RUST_MCOLOR_RED_ST".to_string(), "<S>".to_string());
-        env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-r", "c"], env, b"abcdefg" as &[u8]);
-        assert_eq!(oup.stderr, "");
-        assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-        assert_eq!(oup.status.success(), true);
-    }
-    #[test]
-    fn test_green() {
-        let mut env: HashMap<String, String> = HashMap::new();
-        env.insert("RUST_MCOLOR_GREEN_ST".to_string(), "<S>".to_string());
-        env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-g", "c"], env, b"abcdefg" as &[u8]);
-        assert_eq!(oup.stderr, "");
-        assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-        assert_eq!(oup.status.success(), true);
-    }
-    #[test]
-    fn test_blue() {
-        let mut env: HashMap<String, String> = HashMap::new();
-        env.insert("RUST_MCOLOR_BLUE_ST".to_string(), "<S>".to_string());
-        env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-b", "c"], env, b"abcdefg" as &[u8]);
-        assert_eq!(oup.stderr, "");
-        assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-        assert_eq!(oup.status.success(), true);
-    }
-    #[test]
-    fn test_cyan() {
-        let mut env: HashMap<String, String> = HashMap::new();
-        env.insert("RUST_MCOLOR_CYAN_ST".to_string(), "<S>".to_string());
-        env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-c", "c"], env, b"abcdefg" as &[u8]);
-        assert_eq!(oup.stderr, "");
-        assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-        assert_eq!(oup.status.success(), true);
-    }
-    #[test]
-    fn test_magenda() {
-        let mut env: HashMap<String, String> = HashMap::new();
-        env.insert("RUST_MCOLOR_MAGENDA_ST".to_string(), "<S>".to_string());
-        env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-m", "c"], env, b"abcdefg" as &[u8]);
-        assert_eq!(oup.stderr, "");
-        assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-        assert_eq!(oup.status.success(), true);
-    }
-    #[test]
-    fn test_yellow() {
-        let mut env: HashMap<String, String> = HashMap::new();
-        env.insert("RUST_MCOLOR_YELLOW_ST".to_string(), "<S>".to_string());
-        env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-y", "c"], env, b"abcdefg" as &[u8]);
-        assert_eq!(oup.stderr, "");
-        assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-        assert_eq!(oup.status.success(), true);
-    }
-*/
+    /*
+        use libaki_mcolor::*;
+        use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+        use libaki_mcolor::*;
+        use std::io::Write;
+        use std::collections::HashMap;
+        //
+        #[test]
+        fn test_red() {
+            let mut env: HashMap<String, String> = HashMap::new();
+            env.insert("RUST_MCOLOR_RED_ST".to_string(), "<S>".to_string());
+            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
+            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-r", "c"], env, b"abcdefg" as &[u8]);
+            assert_eq!(oup.stderr, "");
+            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
+            assert_eq!(oup.status.success(), true);
+        }
+        #[test]
+        fn test_green() {
+            let mut env: HashMap<String, String> = HashMap::new();
+            env.insert("RUST_MCOLOR_GREEN_ST".to_string(), "<S>".to_string());
+            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
+            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-g", "c"], env, b"abcdefg" as &[u8]);
+            assert_eq!(oup.stderr, "");
+            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
+            assert_eq!(oup.status.success(), true);
+        }
+        #[test]
+        fn test_blue() {
+            let mut env: HashMap<String, String> = HashMap::new();
+            env.insert("RUST_MCOLOR_BLUE_ST".to_string(), "<S>".to_string());
+            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
+            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-b", "c"], env, b"abcdefg" as &[u8]);
+            assert_eq!(oup.stderr, "");
+            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
+            assert_eq!(oup.status.success(), true);
+        }
+        #[test]
+        fn test_cyan() {
+            let mut env: HashMap<String, String> = HashMap::new();
+            env.insert("RUST_MCOLOR_CYAN_ST".to_string(), "<S>".to_string());
+            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
+            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-c", "c"], env, b"abcdefg" as &[u8]);
+            assert_eq!(oup.stderr, "");
+            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
+            assert_eq!(oup.status.success(), true);
+        }
+        #[test]
+        fn test_magenda() {
+            let mut env: HashMap<String, String> = HashMap::new();
+            env.insert("RUST_MCOLOR_MAGENDA_ST".to_string(), "<S>".to_string());
+            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
+            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-m", "c"], env, b"abcdefg" as &[u8]);
+            assert_eq!(oup.stderr, "");
+            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
+            assert_eq!(oup.status.success(), true);
+        }
+        #[test]
+        fn test_yellow() {
+            let mut env: HashMap<String, String> = HashMap::new();
+            env.insert("RUST_MCOLOR_YELLOW_ST".to_string(), "<S>".to_string());
+            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
+            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-y", "c"], env, b"abcdefg" as &[u8]);
+            assert_eq!(oup.stderr, "");
+            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
+            assert_eq!(oup.status.success(), true);
+        }
+    */
 }
 
 mod test_3 {
     /*
-    use streamio::stringio::*;
     use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use std::io::Write;
     //
      * can NOT test
