@@ -9,7 +9,7 @@
 * command help
 
 ```text
-`aki-mcolor` -H
+aki-mcolor --help
 ```
 
 ```text
