@@ -33,6 +33,17 @@ and install **.deb** into your local repository of debian package.
 
 ## Examples
 
+command line:
 ```
 cat text-file | aki-mcolor -r "^Error" -g "Ok\(.*\)"
+```
+
+command line:
+```text
+echo "abcabca" | aki-mcolor -r "ca"
+```
+
+result output:
+```text
+ab<span style="color:red;">ca</span>b<span style="color:red;">ca</span>
 ```
