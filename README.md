@@ -48,4 +48,4 @@ result output:
 ab<span style="color:red;">ca</span>b<span style="color:red;">ca</span>
 ```
 
-[out1](https://github.com/aki-akaguma/aki-mcolor/img/result-out-abcabca-1.svg)
+![out1](https://github.com/aki-akaguma/aki-mcolor/blob/main/img/result-out-abcabca-1.svg)
