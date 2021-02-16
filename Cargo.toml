@@ -1,6 +1,6 @@
 [package]
 name = "aki-mcolor"
-version = "0.1.11"
+version = "0.1.12"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 mark up text with color
