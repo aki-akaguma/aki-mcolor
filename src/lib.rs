@@ -33,7 +33,7 @@
 //!
 //! ### Command line example 1
 //!
-//! Makes `ca` red and `b` green in standard input text.
+//! Makes "`ca`" **red** and "`b`" **green** in standard input text.
 //!
 //! ```text
 //! echo "abcabca" | aki-mcolor -r "ca" -g "b"
@@ -47,7 +47,9 @@
 //!
 //!
 //! ### Command line example 2
-//! 
+//!
+//! Extract "`arm`" from the rustup target list and make "`musl`" **green** and "`android`" **cyan**.
+//!
 //! ```text
 //! rustup target list | aki-mline -e arm | aki-mcolor -g "musl" -c "android"
 //! ```
