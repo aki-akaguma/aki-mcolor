@@ -2,6 +2,12 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.13 (2021-02-17)
+=====
+Feature:
+
+* fix doc: output image
+
 0.1.12 (2021-02-16)
 =====
 Feature:
