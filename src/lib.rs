@@ -40,10 +40,12 @@
 //! ```text
 //! ab<span style="color:red;">ca</span>b<span style="color:red;">ca</span>
 //! ```
+//! [result out image]
 //!
 //! See [`fn execute()`] for this library examples.
 //!
 //! [`fn execute()`]: crate::execute
+//! [result out image]: https://github.com/aki-akaguma/aki-mcolor/blob/main/img/result-out-abcabca-1.png
 //!
 
 #[macro_use]
