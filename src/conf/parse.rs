@@ -50,22 +50,22 @@ fn help_message(program: &str) -> String {
 
 //----------------------------------------------------------------------
 fn parse_match(conf: &mut CmdOptConf, nv: &NameVal<'_>) -> Result<(), OptParseError> {
-    match CmdOP::from(nv.opt.num) {
-        CmdOP::Red
-        | CmdOP::Green
-        | CmdOP::Blue
-        | CmdOP::Cyan
-        | CmdOP::Magenda
-        | CmdOP::Yellow
-        | CmdOP::Unmark => {
-            let col = match CmdOP::from(nv.opt.num) {
-                CmdOP::Red => Color::Red,
-                CmdOP::Green => Color::Green,
-                CmdOP::Blue => Color::Blue,
-                CmdOP::Cyan => Color::Cyan,
-                CmdOP::Magenda => Color::Magenda,
-                CmdOP::Yellow => Color::Yellow,
-                CmdOP::Unmark => Color::None,
+    match CmdOp::from(nv.opt.num) {
+        CmdOp::Red
+        | CmdOp::Green
+        | CmdOp::Blue
+        | CmdOp::Cyan
+        | CmdOp::Magenda
+        | CmdOp::Yellow
+        | CmdOp::Unmark => {
+            let col = match CmdOp::from(nv.opt.num) {
+                CmdOp::Red => Color::Red,
+                CmdOp::Green => Color::Green,
+                CmdOp::Blue => Color::Blue,
+                CmdOp::Cyan => Color::Cyan,
+                CmdOp::Magenda => Color::Magenda,
+                CmdOp::Yellow => Color::Yellow,
+                CmdOp::Unmark => Color::None,
                 _ => unreachable!(),
             };
             let pat = value_to_string(nv)?;
@@ -74,10 +74,10 @@ fn parse_match(conf: &mut CmdOptConf, nv: &NameVal<'_>) -> Result<(), OptParseEr
                 pattern: pat,
             });
         }
-        CmdOP::Help => {
+        CmdOp::Help => {
             conf.flg_help = true;
         }
-        CmdOP::Version => {
+        CmdOp::Version => {
             conf.flg_version = true;
         }
     }
@@ -133,14 +133,14 @@ pub fn parse_cmdopts(program: &str, args: &[&str]) -> Result<CmdOptConf, OptPars
     if conf.is_help() {
         let mut errs = OptParseErrors::new();
         errs.push(OptParseError::help_message(&help_message(
-            &conf.opt_program,
+            &conf.prog_name,
         )));
         return Err(errs);
     }
     if conf.is_version() {
         let mut errs = OptParseErrors::new();
         errs.push(OptParseError::version_message(&version_message(
-            &conf.opt_program,
+            &conf.prog_name,
         )));
         return Err(errs);
     }
