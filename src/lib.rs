@@ -53,11 +53,11 @@
 //! ```text
 //! rustup target list | aki-mline -e arm | aki-mcolor -g "musl" -c "android"
 //! ```
-//! 
+//!
 //! result output :
-//! 
+//!
 //! ![out rustup image]
-//! 
+//!
 //! [out rustup image]: https://raw.githubusercontent.com/aki-akaguma/aki-mcolor/main/img/out-rustup-1.png
 //!
 //! - [aki-mline](https://crates.io/crates/aki-mline): extract match line command like grep.
@@ -97,23 +97,19 @@ const TRY_HELP_MSG: &str = "Try --help for help.";
 /// example:
 ///
 /// ```
-/// use runnel::StreamIoe;
-/// use runnel::medium::stdio::{StdErr, StdIn, StdOut};
+/// use runnel::RunnelIoeBuilder;
 ///
-/// let r = libaki_mcolor::execute(&StreamIoe {
-///     pin: Box::new(StdIn::default()),
-///     pout: Box::new(StdOut::default()),
-///     perr: Box::new(StdErr::default()),
-/// }, "mcolor", &["-r", "Error", "-g", "Warn"]);
+/// let r = libaki_mcolor::execute(&RunnelIoeBuilder::new().build(),
+///     "mcolor", &["-r", "Error", "-g", "Warn"]);
 /// ```
 ///
-pub fn execute(sioe: &StreamIoe, prog_name: &str, args: &[&str]) -> anyhow::Result<()> {
+pub fn execute(sioe: &RunnelIoe, prog_name: &str, args: &[&str]) -> anyhow::Result<()> {
     let conf = match conf::parse_cmdopts(prog_name, args) {
         Ok(conf) => conf,
         Err(errs) => {
             for err in errs.iter().take(1) {
                 if err.is_help() || err.is_version() {
-                    let _r = sioe.pout.lock().write_fmt(format_args!("{}\n", err));
+                    let _r = sioe.pout().lock().write_fmt(format_args!("{}\n", err));
                     return Ok(());
                 }
             }

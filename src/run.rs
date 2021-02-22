@@ -1,7 +1,7 @@
 use crate::conf::{CmdOptConf, Color, ColorAndRegex};
 use crate::util::err::BrokenPipeError;
 use regex::Regex;
-use runnel::StreamIoe;
+use runnel::RunnelIoe;
 use std::io::{BufRead, Write};
 
 /*
@@ -17,7 +17,7 @@ use std::io::BufRead;
 use std::io::Write;
 */
 
-pub fn run(sioe: &StreamIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
+pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
     let mut colregs: Vec<ColorAndRegex> = Vec::new();
     for colpat in &conf.opt_color_and_patterns {
         let re = Regex::new(&colpat.pattern)?;
@@ -46,7 +46,7 @@ fn color_seq(conf: &CmdOptConf, color: Color) -> &str {
 }
 
 fn do_match_proc(
-    sioe: &StreamIoe,
+    sioe: &RunnelIoe,
     conf: &CmdOptConf,
     colregs: &[ColorAndRegex],
 ) -> anyhow::Result<()> {
@@ -57,7 +57,7 @@ fn do_match_proc(
     let color_end_s = "<E>";
     */
     //
-    for line in sioe.pin.lock().lines() {
+    for line in sioe.pin().lock().lines() {
         let line_s = line?;
         let line_ss = line_s.as_str();
         let line_len: usize = line_ss.len();
@@ -110,11 +110,15 @@ fn do_match_proc(
                 color = line_color_mark[st];
             }
             //
-            sioe.pout.lock().write_fmt(format_args!("{}\n", out_s))?
+            #[rustfmt::skip]
+            sioe.pout().lock().write_fmt(format_args!("{}\n", out_s))?;
         } else {
-            sioe.pout.lock().write_fmt(format_args!("{}\n", line_ss))?
+            #[rustfmt::skip]
+            sioe.pout().lock().write_fmt(format_args!("{}\n", line_ss))?;
         }
     }
+    //
+    sioe.pout().lock().flush()?;
     //
     Ok(())
 }

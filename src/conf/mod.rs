@@ -38,7 +38,7 @@ pub struct ColorAndRegex {
 
 #[derive(Debug, Default)]
 pub struct CmdOptConf {
-    pub opt_program: String,
+    pub prog_name: String,
     //
     pub flg_help: bool,
     pub flg_version: bool,
@@ -74,7 +74,7 @@ static COLOR_YELLOW_START: &str = "\u{1B}[1;33m";
 static COLOR_END: &str = "\u{1B}[0m";
 
 impl CmdOptConf {
-    pub fn create(program: &str) -> Self {
+    pub fn create(a_prog_name: &str) -> Self {
         //
         let a_color_red_start = match env::var("RUST_MCOLOR_RED_ST") {
             Ok(v) => v,
@@ -106,7 +106,7 @@ impl CmdOptConf {
         };
         //
         Self {
-            opt_program: program.to_string(),
+            prog_name: a_prog_name.to_string(),
             opt_color_seq_red_start: a_color_red_start,
             opt_color_seq_green_start: a_color_green_start,
             opt_color_seq_blue_start: a_color_blue_start,
