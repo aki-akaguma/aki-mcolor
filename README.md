@@ -16,28 +16,28 @@ aki-mcolor --help
 Usage:
   aki-mcolor [options]
 
-color marker by rust lang.
+mark up text with color
 
 Options:
-  -r, --red <exp>      regular expression, mark color is red
-  -g, --green <exp>    regular expression, mark color is green
-  -b, --blue <exp>     regular expression, mark color is blue
-  -c, --cyan <exp>     regular expression, mark color is cyan
-  -m, --magenda <exp>  regular expression, mark color is magenda
-  -y, --yellow <exp>   regular expression, mark color is yellow
-  -u, --unmark <exp>   regular expression, unmark color
+  -r, --red <exp>       regular expression, mark color is red
+  -g, --green <exp>     regular expression, mark color is green
+  -b, --blue <exp>      regular expression, mark color is blue
+  -c, --cyan <exp>      regular expression, mark color is cyan
+  -m, --magenda <exp>   regular expression, mark color is magenda
+  -y, --yellow <exp>    regular expression, mark color is yellow
+  -u, --unmark <exp>    regular expression, unmark color
 
-  -H, --help     display this help and exit
-  -V, --version  display version information and exit
+  -H, --help        display this help and exit
+  -V, --version     display version information and exit
 
 Env:
-  RUST_MCOLOR_RED_ST     red start sequence
-  RUST_MCOLOR_GREEN_ST   greep start sequence
-  RUST_MCOLOR_BLUE_ST    blue start sequence
-  RUST_MCOLOR_CYAN_ST    cyan start sequence
-  RUST_MCOLOR_MAGENDA_ST magenda start sequence
-  RUST_MCOLOR_YELLOW_ST  yellow start sequence
-  RUST_MCOLOR_ED         color end sequence
+  AKI_MCOLOR_RED_ST         red start sequence
+  AKI_MCOLOR_GREEN_ST       greep start sequence
+  AKI_MCOLOR_BLUE_ST        blue start sequence
+  AKI_MCOLOR_CYAN_ST        cyan start sequence
+  AKI_MCOLOR_MAGENDA_ST     magenda start sequence
+  AKI_MCOLOR_YELLOW_ST      yellow start sequence
+  AKI_MCOLOR_ED             color end sequence
 ```
 
 * minimum support rustc 1.38.0

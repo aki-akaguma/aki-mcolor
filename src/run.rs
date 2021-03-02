@@ -4,19 +4,6 @@ use regex::Regex;
 use runnel::RunnelIoe;
 use std::io::{BufRead, Write};
 
-/*
-use regex::Regex;
-
-use crate::conf::CmdOptConf;
-use crate::conf::Color;
-use crate::conf::ColorAndRegex;
-//use crate::util::AppError;
-
-use std::io;
-use std::io::BufRead;
-use std::io::Write;
-*/
-
 pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
     let mut colregs: Vec<ColorAndRegex> = Vec::new();
     for colpat in &conf.opt_color_and_patterns {

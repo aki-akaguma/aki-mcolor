@@ -13,17 +13,17 @@ include!("cmd.help.rs.txt");
 
 //{{{ TEXT
 const DESCRIPTIONS_TEXT: &str = r#"
-color marker by rust lang.
+mark up text with color
 "#;
 //const ARGUMENTS_TEXT: &str = r#""#;
 const ENV_TEXT: &str = r#"Env:
-  RUST_MCOLOR_RED_ST     red start sequence
-  RUST_MCOLOR_GREEN_ST   greep start sequence
-  RUST_MCOLOR_BLUE_ST    blue start sequence
-  RUST_MCOLOR_CYAN_ST    cyan start sequence
-  RUST_MCOLOR_MAGENDA_ST magenda start sequence
-  RUST_MCOLOR_YELLOW_ST  yellow start sequence
-  RUST_MCOLOR_ED         color end sequence
+  AKI_MCOLOR_RED_ST         red start sequence
+  AKI_MCOLOR_GREEN_ST       greep start sequence
+  AKI_MCOLOR_BLUE_ST        blue start sequence
+  AKI_MCOLOR_CYAN_ST        cyan start sequence
+  AKI_MCOLOR_MAGENDA_ST     magenda start sequence
+  AKI_MCOLOR_YELLOW_ST      yellow start sequence
+  AKI_MCOLOR_ED             color end sequence
 "#;
 //const EXAMPLES_TEXT: &str = r#""#;
 //}}} TEXT
@@ -44,7 +44,6 @@ fn usage_message(program: &str) -> String {
 fn help_message(program: &str) -> String {
     let ver = version_message(program);
     let usa = usage_message(env!("CARGO_PKG_NAME"));
-    //[ &ver, "", &usa, DESCRIPTIONS_TEXT, OPTIONS_TEXT, ARGUMENTS_TEXT, ENV_TEXT, EXAMPLES_TEXT].join("\n")
     [ &ver, "", &usa, DESCRIPTIONS_TEXT, OPTIONS_TEXT, ENV_TEXT].join("\n")
 }
 
@@ -132,9 +131,7 @@ pub fn parse_cmdopts(program: &str, args: &[&str]) -> Result<CmdOptConf, OptPars
     //
     if conf.is_help() {
         let mut errs = OptParseErrors::new();
-        errs.push(OptParseError::help_message(&help_message(
-            &conf.prog_name,
-        )));
+        errs.push(OptParseError::help_message(&help_message(&conf.prog_name)));
         return Err(errs);
     }
     if conf.is_version() {
