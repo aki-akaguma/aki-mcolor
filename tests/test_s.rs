@@ -6,28 +6,28 @@ macro_rules! help_msg {
             "Usage:\n",
             "  aki-mcolor [options]\n",
             "\n",
-            "color marker by rust lang.\n",
+            "mark up text with color\n",
             "\n",
             "Options:\n",
-            "  -r, --red <exp>      regular expression, mark color is red\n",
-            "  -g, --green <exp>    regular expression, mark color is green\n",
-            "  -b, --blue <exp>     regular expression, mark color is blue\n",
-            "  -c, --cyan <exp>     regular expression, mark color is cyan\n",
-            "  -m, --magenda <exp>  regular expression, mark color is magenda\n",
-            "  -y, --yellow <exp>   regular expression, mark color is yellow\n",
-            "  -u, --unmark <exp>   regular expression, unmark color\n",
+            "  -r, --red <exp>       regular expression, mark color is red\n",
+            "  -g, --green <exp>     regular expression, mark color is green\n",
+            "  -b, --blue <exp>      regular expression, mark color is blue\n",
+            "  -c, --cyan <exp>      regular expression, mark color is cyan\n",
+            "  -m, --magenda <exp>   regular expression, mark color is magenda\n",
+            "  -y, --yellow <exp>    regular expression, mark color is yellow\n",
+            "  -u, --unmark <exp>    regular expression, unmark color\n",
             "\n",
-            "  -H, --help     display this help and exit\n",
-            "  -V, --version  display version information and exit\n",
+            "  -H, --help        display this help and exit\n",
+            "  -V, --version     display version information and exit\n",
             "\n",
             "Env:\n",
-            "  RUST_MCOLOR_RED_ST     red start sequence\n",
-            "  RUST_MCOLOR_GREEN_ST   greep start sequence\n",
-            "  RUST_MCOLOR_BLUE_ST    blue start sequence\n",
-            "  RUST_MCOLOR_CYAN_ST    cyan start sequence\n",
-            "  RUST_MCOLOR_MAGENDA_ST magenda start sequence\n",
-            "  RUST_MCOLOR_YELLOW_ST  yellow start sequence\n",
-            "  RUST_MCOLOR_ED         color end sequence\n",
+            "  AKI_MCOLOR_RED_ST         red start sequence\n",
+            "  AKI_MCOLOR_GREEN_ST       greep start sequence\n",
+            "  AKI_MCOLOR_BLUE_ST        blue start sequence\n",
+            "  AKI_MCOLOR_CYAN_ST        cyan start sequence\n",
+            "  AKI_MCOLOR_MAGENDA_ST     magenda start sequence\n",
+            "  AKI_MCOLOR_YELLOW_ST      yellow start sequence\n",
+            "  AKI_MCOLOR_ED             color end sequence\n",
             "\n"
         )
     };
@@ -75,8 +75,8 @@ macro_rules! do_execute {
             Ok(_) => {}
             Err(ref err) => {
                 #[rustfmt::skip]
-                                let _ = sioe.perr().lock()
-                                    .write_fmt(format_args!("{}: {}\n", program, err));
+                                    let _ = sioe.perr().lock()
+                                        .write_fmt(format_args!("{}: {}\n", program, err));
             }
         };
         (r, sioe)

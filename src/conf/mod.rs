@@ -2,10 +2,9 @@ pub use self::parse::parse_cmdopts;
 
 mod parse;
 
+use regex::Regex;
 use std::default::Default;
 use std::env;
-
-use regex::Regex;
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -76,31 +75,31 @@ static COLOR_END: &str = "\u{1B}[0m";
 impl CmdOptConf {
     pub fn create(a_prog_name: &str) -> Self {
         //
-        let a_color_red_start = match env::var("RUST_MCOLOR_RED_ST") {
+        let a_color_red_start = match env::var("AKI_MCOLOR_RED_ST") {
             Ok(v) => v,
             Err(_) => String::from(COLOR_RED_START),
         };
-        let a_color_green_start = match env::var("RUST_MCOLOR_GREEN_ST") {
+        let a_color_green_start = match env::var("AKI_MCOLOR_GREEN_ST") {
             Ok(v) => v,
             Err(_) => String::from(COLOR_GREEN_START),
         };
-        let a_color_blue_start = match env::var("RUST_MCOLOR_BLUE_ST") {
+        let a_color_blue_start = match env::var("AKI_MCOLOR_BLUE_ST") {
             Ok(v) => v,
             Err(_) => String::from(COLOR_BLUE_START),
         };
-        let a_color_cyan_start = match env::var("RUST_MCOLOR_CYAN_ST") {
+        let a_color_cyan_start = match env::var("AKI_MCOLOR_CYAN_ST") {
             Ok(v) => v,
             Err(_) => String::from(COLOR_CYAN_START),
         };
-        let a_color_magenda_start = match env::var("RUST_MCOLOR_MAGENDA_ST") {
+        let a_color_magenda_start = match env::var("AKI_MCOLOR_MAGENDA_ST") {
             Ok(v) => v,
             Err(_) => String::from(COLOR_MAGENDA_START),
         };
-        let a_color_yellow_start = match env::var("RUST_MCOLOR_YELLOW_ST") {
+        let a_color_yellow_start = match env::var("AKI_MCOLOR_YELLOW_ST") {
             Ok(v) => v,
             Err(_) => String::from(COLOR_YELLOW_START),
         };
-        let a_color_end = match env::var("RUST_MCOLOR_ED") {
+        let a_color_end = match env::var("AKI_MCOLOR_ED") {
             Ok(v) => v,
             Err(_) => String::from(COLOR_END),
         };
