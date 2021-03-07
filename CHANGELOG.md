@@ -1,6 +1,13 @@
-TBD
+aki-mcolor TBD
 ===
 Unreleased changes. Release notes have not yet been written.
+
+0.1.16 (2021-03-08)
+=====
+
+* update crate: regex (1.4)
+* update crate: runnel
+* rename file: xtask/src/cmd.txt to xtask/src/aki-mcolor-cmd.txt
 
 0.1.15 (2021-03-02)
 =====
@@ -9,6 +16,7 @@ Feature:
 * change env: RUST_MCOLOR_RED_ST to AKI_MCOLOR_RED_ST
 * update crate: flood-tide-gen
 * add some documents
+* cleanup src/main.rs and build.rs
 
 0.1.14 (2021-02-22)
 =====
