@@ -1,6 +1,6 @@
 [package]
 name = "aki-mcolor"
-version = "0.1.16"
+version = "0.1.17"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 mark up text with color
@@ -34,7 +34,7 @@ runnel = "0.3"
 [dev-dependencies]
 
 [build-dependencies]
-rustc_version = "=0.2.3"
+rustc_version = "0.3"
 
 [workspace]
 members = [
