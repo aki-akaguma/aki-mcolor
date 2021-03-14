@@ -2,6 +2,11 @@ aki-mcolor TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.18 (2021-03-14)
+=====
+
+* update crate: regex: fix memory leak
+
 0.1.17 (2021-03-08)
 =====
 
