@@ -9,25 +9,28 @@ macro_rules! help_msg {
             "mark up text with color\n",
             "\n",
             "Options:\n",
-            "  -r, --red <exp>       regular expression, mark color is red\n",
-            "  -g, --green <exp>     regular expression, mark color is green\n",
-            "  -b, --blue <exp>      regular expression, mark color is blue\n",
-            "  -c, --cyan <exp>      regular expression, mark color is cyan\n",
-            "  -m, --magenda <exp>   regular expression, mark color is magenda\n",
-            "  -y, --yellow <exp>    regular expression, mark color is yellow\n",
-            "  -u, --unmark <exp>    regular expression, unmark color\n",
+            "  -r, --red <exp>       write it in red\n",
+            "  -g, --green <exp>     write it in green\n",
+            "  -b, --blue <exp>      write it in blue\n",
+            "  -c, --cyan <exp>      write it in cyan\n",
+            "  -m, --magenda <exp>   write it in magenda\n",
+            "  -y, --yellow <exp>    write it in yellow\n",
+            "  -u, --unmark <exp>    write it in non-color\n",
             "\n",
             "  -H, --help        display this help and exit\n",
             "  -V, --version     display version information and exit\n",
             "\n",
-            "Env:\n",
-            "  AKI_MCOLOR_RED_ST         red start sequence\n",
-            "  AKI_MCOLOR_GREEN_ST       greep start sequence\n",
-            "  AKI_MCOLOR_BLUE_ST        blue start sequence\n",
-            "  AKI_MCOLOR_CYAN_ST        cyan start sequence\n",
-            "  AKI_MCOLOR_MAGENDA_ST     magenda start sequence\n",
-            "  AKI_MCOLOR_YELLOW_ST      yellow start sequence\n",
-            "  AKI_MCOLOR_ED             color end sequence\n",
+            "Option Parameters:\n",
+            "  <exp>     regular expression, color the entire match. \n",
+            "\n",
+            "Environments:\n",
+            "  AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi\n",
+            "  AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi\n",
+            "  AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi\n",
+            "  AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi\n",
+            "  AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi\n",
+            "  AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi\n",
+            "  AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi\n",
             "\n"
         )
     };
@@ -74,9 +77,29 @@ macro_rules! do_execute {
         match r {
             Ok(_) => {}
             Err(ref err) => {
-                #[rustfmt::skip]
-                                        let _ = sioe.perr().lock()
-                                            .write_fmt(format_args!("{}: {}\n", program, err));
+                let _ = sioe
+                    .perr()
+                    .lock()
+                    .write_fmt(format_args!("{}: {}\n", program, err));
+            }
+        };
+        (r, sioe)
+    }};
+    ($env:expr, $args:expr, $sin:expr) => {{
+        let sioe = RunnelIoe::new(
+            Box::new(StringIn::with_str($sin)),
+            Box::new(StringOut::default()),
+            Box::new(StringErr::default()),
+        );
+        let program = env!("CARGO_PKG_NAME");
+        let r = execute_env(&sioe, &program, $args, $env);
+        match r {
+            Ok(_) => {}
+            Err(ref err) => {
+                let _ = sioe
+                    .perr()
+                    .lock()
+                    .write_fmt(format_args!("{}: {}\n", program, err));
             }
         };
         (r, sioe)
@@ -92,7 +115,7 @@ macro_rules! buff {
     };
 }
 
-mod test_0 {
+mod test_0_s {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -144,75 +167,72 @@ mod test_0 {
     }
 }
 
-mod test_1 {
-    /*
-        use libaki_mcolor::*;
-        use runnel::medium::stringio::{StringErr, StringIn, StringOut};
-        use libaki_mcolor::*;
-        use std::io::Write;
-        use std::collections::HashMap;
-        //
-        #[test]
-        fn test_red() {
-            let mut env: HashMap<String, String> = HashMap::new();
-            env.insert("RUST_MCOLOR_RED_ST".to_string(), "<S>".to_string());
-            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-r", "c"], env, b"abcdefg" as &[u8]);
-            assert_eq!(oup.stderr, "");
-            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-            assert_eq!(oup.status.success(), true);
-        }
-        #[test]
-        fn test_green() {
-            let mut env: HashMap<String, String> = HashMap::new();
-            env.insert("RUST_MCOLOR_GREEN_ST".to_string(), "<S>".to_string());
-            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-g", "c"], env, b"abcdefg" as &[u8]);
-            assert_eq!(oup.stderr, "");
-            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-            assert_eq!(oup.status.success(), true);
-        }
-        #[test]
-        fn test_blue() {
-            let mut env: HashMap<String, String> = HashMap::new();
-            env.insert("RUST_MCOLOR_BLUE_ST".to_string(), "<S>".to_string());
-            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-b", "c"], env, b"abcdefg" as &[u8]);
-            assert_eq!(oup.stderr, "");
-            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-            assert_eq!(oup.status.success(), true);
-        }
-        #[test]
-        fn test_cyan() {
-            let mut env: HashMap<String, String> = HashMap::new();
-            env.insert("RUST_MCOLOR_CYAN_ST".to_string(), "<S>".to_string());
-            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-c", "c"], env, b"abcdefg" as &[u8]);
-            assert_eq!(oup.stderr, "");
-            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-            assert_eq!(oup.status.success(), true);
-        }
-        #[test]
-        fn test_magenda() {
-            let mut env: HashMap<String, String> = HashMap::new();
-            env.insert("RUST_MCOLOR_MAGENDA_ST".to_string(), "<S>".to_string());
-            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-m", "c"], env, b"abcdefg" as &[u8]);
-            assert_eq!(oup.stderr, "");
-            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-            assert_eq!(oup.status.success(), true);
-        }
-        #[test]
-        fn test_yellow() {
-            let mut env: HashMap<String, String> = HashMap::new();
-            env.insert("RUST_MCOLOR_YELLOW_ST".to_string(), "<S>".to_string());
-            env.insert("RUST_MCOLOR_ED".to_string(), "<E>".to_string());
-            let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-y", "c"], env, b"abcdefg" as &[u8]);
-            assert_eq!(oup.stderr, "");
-            assert_eq!(oup.stdout, "ab<S>c<E>defg\n");
-            assert_eq!(oup.status.success(), true);
-        }
-    */
+mod test_1_s {
+    use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    #[test]
+    fn test_red() {
+        let mut env = conf::EnvConf::new();
+        env.color_seq_red_start = "<S>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        let (r, sioe) = do_execute!(&env, &["-r", "c"], "abcdefg");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    #[test]
+    fn test_green() {
+        let mut env = conf::EnvConf::new();
+        env.color_seq_green_start = "<S>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        let (r, sioe) = do_execute!(&env, &["-g", "c"], "abcdefg");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    #[test]
+    fn test_blue() {
+        let mut env = conf::EnvConf::new();
+        env.color_seq_blue_start = "<S>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        let (r, sioe) = do_execute!(&env, &["-b", "c"], "abcdefg");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    #[test]
+    fn test_cyan() {
+        let mut env = conf::EnvConf::new();
+        env.color_seq_cyan_start = "<S>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        let (r, sioe) = do_execute!(&env, &["-c", "c"], "abcdefg");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    #[test]
+    fn test_magenda() {
+        let mut env = conf::EnvConf::new();
+        env.color_seq_magenda_start = "<S>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        let (r, sioe) = do_execute!(&env, &["-m", "c"], "abcdefg");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    #[test]
+    fn test_yellow() {
+        let mut env = conf::EnvConf::new();
+        env.color_seq_yellow_start = "<S>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        let (r, sioe) = do_execute!(&env, &["-y", "c"], "abcdefg");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(r.is_ok(), true);
+    }
 }
 
 mod test_3 {

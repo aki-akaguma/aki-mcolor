@@ -1,12 +1,8 @@
 //
-//use flood_tide::parse_simple_gnu_style;
+use flood_tide::parse_simple_gnu_style;
 use flood_tide::HelpVersion;
-use flood_tide::{Arg, Lex, NameVal, Opt, OptNum};
+use flood_tide::{Arg, NameVal, Opt, OptNum};
 use flood_tide::{OptParseError, OptParseErrors};
-
-use crate::conf::CmdOptConf;
-use crate::conf::Color;
-use crate::conf::ColorAndPattern;
 
 //----------------------------------------------------------------------
 include!("cmd.help.rs.txt");
@@ -15,15 +11,18 @@ include!("cmd.help.rs.txt");
 const DESCRIPTIONS_TEXT: &str = r#"
 mark up text with color
 "#;
+const PARAMS_TEXT: &str = r#"Option Parameters:
+  <exp>     regular expression, color the entire match. 
+"#;
 //const ARGUMENTS_TEXT: &str = r#""#;
-const ENV_TEXT: &str = r#"Env:
-  AKI_MCOLOR_RED_ST         red start sequence
-  AKI_MCOLOR_GREEN_ST       greep start sequence
-  AKI_MCOLOR_BLUE_ST        blue start sequence
-  AKI_MCOLOR_CYAN_ST        cyan start sequence
-  AKI_MCOLOR_MAGENDA_ST     magenda start sequence
-  AKI_MCOLOR_YELLOW_ST      yellow start sequence
-  AKI_MCOLOR_ED             color end sequence
+const ENV_TEXT: &str = r#"Environments:
+  AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi
 "#;
 //const EXAMPLES_TEXT: &str = r#""#;
 //}}} TEXT
@@ -44,90 +43,23 @@ fn usage_message(program: &str) -> String {
 fn help_message(program: &str) -> String {
     let ver = version_message(program);
     let usa = usage_message(env!("CARGO_PKG_NAME"));
-    [ &ver, "", &usa, DESCRIPTIONS_TEXT, OPTIONS_TEXT, ENV_TEXT].join("\n")
+    [ &ver, "", &usa, DESCRIPTIONS_TEXT, OPTIONS_TEXT, PARAMS_TEXT, ENV_TEXT].join("\n")
 }
 
 //----------------------------------------------------------------------
 fn parse_match(conf: &mut CmdOptConf, nv: &NameVal<'_>) -> Result<(), OptParseError> {
-    match CmdOp::from(nv.opt.num) {
-        CmdOp::Red
-        | CmdOp::Green
-        | CmdOp::Blue
-        | CmdOp::Cyan
-        | CmdOp::Magenda
-        | CmdOp::Yellow
-        | CmdOp::Unmark => {
-            let col = match CmdOp::from(nv.opt.num) {
-                CmdOp::Red => Color::Red,
-                CmdOp::Green => Color::Green,
-                CmdOp::Blue => Color::Blue,
-                CmdOp::Cyan => Color::Cyan,
-                CmdOp::Magenda => Color::Magenda,
-                CmdOp::Yellow => Color::Yellow,
-                CmdOp::Unmark => Color::None,
-                _ => unreachable!(),
-            };
-            let pat = value_to_string(nv)?;
-            conf.opt_color_and_patterns.push(ColorAndPattern {
-                color: col,
-                pattern: pat,
-            });
-        }
-        CmdOp::Help => {
-            conf.flg_help = true;
-        }
-        CmdOp::Version => {
-            conf.flg_version = true;
-        }
-    }
-    //
+    include!("cmd.match.rs.txt");
     Ok(())
 }
 
-pub fn parse_my_style<'a, T, F>(
-    conf: &mut T,
-    opt_ary: &'a [Opt],
-    sho_idx_ary: &'a [(u8, usize)],
-    args: &'a [&'a str],
-    parse_match: F,
-) -> (Option<Vec<String>>, Result<(), OptParseErrors>)
-where
-    F: Fn(&mut T, &NameVal<'_>) -> Result<(), OptParseError>,
-    T: HelpVersion,
-{
-    let lex = Lex::create_with(opt_ary, sho_idx_ary);
-    let tokens = match lex.tokens_from(&args) {
-        Ok(t) => t,
-        Err(errs) => {
-            return (None, Err(errs));
-        }
+pub fn parse_cmdopts(a_prog_name: &str, args: &[&str]) -> Result<CmdOptConf, OptParseErrors> {
+    //
+    let mut conf = CmdOptConf {
+        prog_name: a_prog_name.to_string(),
+        ..Default::default()
     };
-    //
-    let mut errs = OptParseErrors::new();
-    //
-    for nv in tokens.namevals.iter() {
-        match parse_match(conf, &nv) {
-            Ok(_) => {}
-            Err(err) => {
-                errs.push(err);
-            }
-        }
-        if conf.is_help() || conf.is_version() {
-            break;
-        }
-    }
-    //
-    let mut v: Vec<String> = Vec::new();
-    v.extend(tokens.free.iter().map(|&s| s.to_string()));
-    //
-    (Some(v), Err(errs))
-}
-
-pub fn parse_cmdopts(program: &str, args: &[&str]) -> Result<CmdOptConf, OptParseErrors> {
-    //
-    let mut conf = CmdOptConf::create(program);
     let (opt_free, r_errs) =
-        parse_my_style(&mut conf, &OPT_ARY, &OPT_ARY_SHO_IDX, args, parse_match);
+        parse_simple_gnu_style(&mut conf, &OPT_ARY, &OPT_ARY_SHO_IDX, args, parse_match);
     //
     if conf.is_help() {
         let mut errs = OptParseErrors::new();
@@ -149,7 +81,14 @@ pub fn parse_cmdopts(program: &str, args: &[&str]) -> Result<CmdOptConf, OptPars
             OptParseErrors::new()
         };
         //
-        if conf.opt_color_and_patterns.is_empty() {
+        if conf.opt_red.is_empty()
+            && conf.opt_green.is_empty()
+            && conf.opt_blue.is_empty()
+            && conf.opt_cyan.is_empty()
+            && conf.opt_magenda.is_empty()
+            && conf.opt_yellow.is_empty()
+            && conf.opt_unmark.is_empty()
+        {
             errs.push(OptParseError::missing_option("r|g|b|c|m|y|u"));
         }
         //
