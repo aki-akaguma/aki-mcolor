@@ -1,44 +1,58 @@
-use crate::conf::{CmdOptConf, Color, ColorAndRegex};
+use crate::conf::{CmdOptConf, Color, ColorAndRegex, EnvConf};
 use crate::util::err::BrokenPipeError;
 use regex::Regex;
 use runnel::RunnelIoe;
 use std::io::{BufRead, Write};
 
-pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf) -> anyhow::Result<()> {
+macro_rules! make_color_and_regex {
+    ($vec:expr, $pattern:expr, $color:expr) => {{
+        if !$pattern.is_empty() {
+            let re = Regex::new(&$pattern)?;
+            $vec.push(ColorAndRegex {
+                color: $color,
+                regex: re,
+            });
+        }
+    }};
+}
+
+pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf, env: &EnvConf) -> anyhow::Result<()> {
     let mut colregs: Vec<ColorAndRegex> = Vec::new();
-    for colpat in &conf.opt_color_and_patterns {
-        let re = Regex::new(&colpat.pattern)?;
-        colregs.push(ColorAndRegex {
-            color: colpat.color,
-            regex: re,
-        });
-    }
-    let r = do_match_proc(sioe, conf, &colregs);
+    make_color_and_regex!(colregs, conf.opt_red, Color::Red);
+    make_color_and_regex!(colregs, conf.opt_green, Color::Green);
+    make_color_and_regex!(colregs, conf.opt_blue, Color::Blue);
+    make_color_and_regex!(colregs, conf.opt_cyan, Color::Cyan);
+    make_color_and_regex!(colregs, conf.opt_magenda, Color::Magenda);
+    make_color_and_regex!(colregs, conf.opt_yellow, Color::Yellow);
+    make_color_and_regex!(colregs, conf.opt_unmark, Color::None);
+    //
+    let r = do_match_proc(sioe, conf, env, &colregs);
     if r.is_broken_pipe() {
         return Ok(());
     }
     r
 }
 
-fn color_seq(conf: &CmdOptConf, color: Color) -> &str {
+fn color_seq(env: &EnvConf, color: Color) -> &str {
     match color {
         Color::None => "",
-        Color::Red => conf.opt_color_seq_red_start.as_str(),
-        Color::Green => conf.opt_color_seq_green_start.as_str(),
-        Color::Blue => conf.opt_color_seq_blue_start.as_str(),
-        Color::Cyan => conf.opt_color_seq_cyan_start.as_str(),
-        Color::Magenda => conf.opt_color_seq_magenda_start.as_str(),
-        Color::Yellow => conf.opt_color_seq_yellow_start.as_str(),
+        Color::Red => env.color_seq_red_start.as_str(),
+        Color::Green => env.color_seq_green_start.as_str(),
+        Color::Blue => env.color_seq_blue_start.as_str(),
+        Color::Cyan => env.color_seq_cyan_start.as_str(),
+        Color::Magenda => env.color_seq_magenda_start.as_str(),
+        Color::Yellow => env.color_seq_yellow_start.as_str(),
     }
 }
 
 fn do_match_proc(
     sioe: &RunnelIoe,
-    conf: &CmdOptConf,
+    _conf: &CmdOptConf,
+    env: &EnvConf,
     colregs: &[ColorAndRegex],
 ) -> anyhow::Result<()> {
-    //let color_start_s = conf.opt_color_seq_red_start.as_str();
-    let color_end_s = conf.opt_color_seq_end.as_str();
+    //let color_start_s = env.color_seq_red_start.as_str();
+    let color_end_s = env.color_seq_end.as_str();
     /*
     let color_start_s = "<S>";
     let color_end_s = "<E>";
@@ -81,7 +95,7 @@ fn do_match_proc(
                 };
                 if st != next_pos {
                     if color != Color::None {
-                        let color_start_s = color_seq(conf, color);
+                        let color_start_s = color_seq(env, color);
                         out_s.push_str(color_start_s);
                     }
                     out_s.push_str(&line_ss[st..next_pos]);

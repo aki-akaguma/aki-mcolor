@@ -19,25 +19,28 @@ Usage:
 mark up text with color
 
 Options:
-  -r, --red <exp>       regular expression, mark color is red
-  -g, --green <exp>     regular expression, mark color is green
-  -b, --blue <exp>      regular expression, mark color is blue
-  -c, --cyan <exp>      regular expression, mark color is cyan
-  -m, --magenda <exp>   regular expression, mark color is magenda
-  -y, --yellow <exp>    regular expression, mark color is yellow
-  -u, --unmark <exp>    regular expression, unmark color
+  -r, --red <exp>       write it in red
+  -g, --green <exp>     write it in green
+  -b, --blue <exp>      write it in blue
+  -c, --cyan <exp>      write it in cyan
+  -m, --magenda <exp>   write it in magenda
+  -y, --yellow <exp>    write it in yellow
+  -u, --unmark <exp>    write it in non-color
 
   -H, --help        display this help and exit
   -V, --version     display version information and exit
 
-Env:
-  AKI_MCOLOR_RED_ST         red start sequence
-  AKI_MCOLOR_GREEN_ST       greep start sequence
-  AKI_MCOLOR_BLUE_ST        blue start sequence
-  AKI_MCOLOR_CYAN_ST        cyan start sequence
-  AKI_MCOLOR_MAGENDA_ST     magenda start sequence
-  AKI_MCOLOR_YELLOW_ST      yellow start sequence
-  AKI_MCOLOR_ED             color end sequence
+Option Parameters:
+  <exp>     regular expression, color the entire match. 
+
+Environments:
+  AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi
 ```
 
 * minimum support rustc 1.38.0
@@ -97,3 +100,7 @@ result output :
 See [`fn execute()`] for this library examples.
 
 [`fn execute()`]: crate::execute
+
+## Changelogs
+
+[This crate's changelog here.](https://github.com/aki-akaguma/aki-mcolor/blob/main/CHANGELOG.md)
