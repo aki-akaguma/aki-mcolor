@@ -4,9 +4,9 @@
 //! ```text
 //! Usage:
 //!   aki-mcolor [options]
-//! 
+//!
 //! mark up text with color
-//! 
+//!
 //! Options:
 //!   -r, --red <exp>       write it in red
 //!   -g, --green <exp>     write it in green
@@ -15,13 +15,13 @@
 //!   -m, --magenda <exp>   write it in magenda
 //!   -y, --yellow <exp>    write it in yellow
 //!   -u, --unmark <exp>    write it in non-color
-//! 
+//!
 //!   -H, --help        display this help and exit
 //!   -V, --version     display version information and exit
-//! 
+//!
 //! Option Parameters:
-//!   <exp>     regular expression, color the entire match. 
-//! 
+//!   <exp>     regular expression, color the entire match.
+//!
 //! Environments:
 //!   AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi
 //!   AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi
