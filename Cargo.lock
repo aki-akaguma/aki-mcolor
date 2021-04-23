@@ -11,7 +11,7 @@ dependencies = [
 
 [[package]]
 name = "aki-mcolor"
-version = "0.1.22"
+version = "0.1.23"
 dependencies = [
  "anyhow",
  "flood-tide",
