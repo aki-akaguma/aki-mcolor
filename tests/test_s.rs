@@ -19,6 +19,7 @@ macro_rules! help_msg {
             "\n",
             "  -H, --help        display this help and exit\n",
             "  -V, --version     display version information and exit\n",
+            "  -X <x-options>    x options. try -X help\n",
             "\n",
             "Option Parameters:\n",
             "  <exp>     regular expression, color the entire match. \n",
