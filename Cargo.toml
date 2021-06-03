@@ -1,6 +1,6 @@
 [package]
 name = "aki-mcolor"
-version = "0.1.23"
+version = "0.1.24"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 description = """
 mark up text with color
@@ -24,11 +24,12 @@ path = "src/main.rs"
 
 [features]
 default = []
+debian_build = []
 
 [dependencies]
 anyhow = "1.0"
 flood-tide = { version="0.2", default-features=true, features=["stop_at_mm"] }
-regex = "1.4"
+regex = "1.5"
 runnel = "0.3"
 
 [dev-dependencies]
@@ -43,7 +44,7 @@ members = [
 ]
 
 [package.metadata.deb]
-features = []
+features = ["debian_build"]
 section = "AAA-text"
 priority = "optional"
 maintainer = "aki <aki.akaguma@hotmail.com>"
