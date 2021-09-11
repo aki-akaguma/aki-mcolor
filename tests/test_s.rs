@@ -3,35 +3,39 @@ macro_rules! help_msg {
         concat!(
             version_msg!(),
             "\n",
-            "Usage:\n",
-            "  aki-mcolor [options]\n",
-            "\n",
-            "mark up text with color\n",
-            "\n",
-            "Options:\n",
-            "  -r, --red <exp>       write it in red\n",
-            "  -g, --green <exp>     write it in green\n",
-            "  -b, --blue <exp>      write it in blue\n",
-            "  -c, --cyan <exp>      write it in cyan\n",
-            "  -m, --magenda <exp>   write it in magenda\n",
-            "  -y, --yellow <exp>    write it in yellow\n",
-            "  -u, --unmark <exp>    write it in non-color\n",
-            "\n",
-            "  -H, --help        display this help and exit\n",
-            "  -V, --version     display version information and exit\n",
-            "  -X <x-options>    x options. try -X help\n",
-            "\n",
-            "Option Parameters:\n",
-            "  <exp>     regular expression, color the entire match. \n",
-            "\n",
-            "Environments:\n",
-            "  AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi\n",
-            "  AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi\n",
-            "  AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi\n",
-            "  AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi\n",
-            "  AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi\n",
-            "  AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi\n",
-            "  AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi\n",
+            indoc::indoc!(
+                r#"
+            Usage:
+              aki-mcolor [options]
+
+            mark up text with color
+
+            Options:
+              -r, --red <exp>       write it in red
+              -g, --green <exp>     write it in green
+              -b, --blue <exp>      write it in blue
+              -c, --cyan <exp>      write it in cyan
+              -m, --magenda <exp>   write it in magenda
+              -y, --yellow <exp>    write it in yellow
+              -u, --unmark <exp>    write it in non-color
+
+              -H, --help        display this help and exit
+              -V, --version     display version information and exit
+              -X <x-options>    x options. try -X help
+
+            Option Parameters:
+              <exp>     regular expression, color the entire match. 
+
+            Environments:
+              AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi
+              AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi
+              AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi
+              AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi
+              AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi
+              AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi
+              AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi
+            "#
+            ),
             "\n"
         )
     };
