@@ -1,18 +1,19 @@
 # aki-mcolor
 
-*aki-mcolor* program is mark up text with color.
+the mark up text with color program.
 
 ## Features
 
-*aki-mcolor*  is mark up text with color.
+- mark up text with color.
+- minimum support rustc 1.47.0 (18bf6b4f0 2020-10-07)
 
-* command help
+## Command help
 
-```text
+```
 aki-mcolor --help
 ```
 
-```text
+```
 Usage:
   aki-mcolor [options]
 
@@ -31,7 +32,7 @@ Options:
   -V, --version     display version information and exit
 
 Option Parameters:
-  <exp>     regular expression, color the entire match. 
+  <exp>     regular expression, color the entire match.
 
 Environments:
   AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi
@@ -43,28 +44,25 @@ Environments:
   AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi
 ```
 
-* minimum support rustc 1.38.0
-
 ## Quick install
 
 1. you can install this into cargo bin path:
 
-```text
+```
 cargo install aki-mcolor
 ```
 
 2. you can build debian package:
 
-```text
+```
 cargo deb
 ```
 
 and install **.deb** into your local repository of debian package.
 
-
 ## Examples
 
-#### Command line example 1
+### Command line example 1
 
 Makes "`ca`" **red** and "`b`" **green** in standard input text.
 
@@ -79,7 +77,7 @@ result output :
 [out abcabca image]: https://raw.githubusercontent.com/aki-akaguma/aki-mcolor/main/img/out-abcabca-1.png
 
 
-#### Command line example 2
+### Command line example 2
 
 Extract "`arm`" from the rustup target list and make "`musl`" **green** and "`android`" **cyan**.
 
@@ -95,12 +93,24 @@ result output :
 
 - [aki-mline](https://crates.io/crates/aki-mline): extract match line command like grep.
 
-#### Library example
+## Library example
 
 See [`fn execute()`] for this library examples.
 
 [`fn execute()`]: crate::execute
 
-## Changelogs
+
+# Changelogs
 
 [This crate's changelog here.](https://github.com/aki-akaguma/aki-mcolor/blob/main/CHANGELOG.md)
+
+# License
+
+This project is licensed under either of
+
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or
+   https://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or
+   https://opensource.org/licenses/MIT)
+
+at your option.
