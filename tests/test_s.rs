@@ -239,7 +239,35 @@ mod test_1_s {
         assert_eq!(r.is_ok(), true);
     }
 }
-
+mod test_2_s {
+    use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    #[test]
+    fn test_red_green() {
+        let mut env = conf::EnvConf::new();
+        env.color_seq_red_start = "<R>".to_string();
+        env.color_seq_green_start = "<G>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        let (r, sioe) = do_execute!(&env, &["-r", "c", "-g", "d"], "abcdefg");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "ab<R>c<E><G>d<E>efg\n");
+        assert_eq!(r.is_ok(), true);
+    }
+    #[test]
+    fn test_red_green_red() {
+        let mut env = conf::EnvConf::new();
+        env.color_seq_red_start = "<R>".to_string();
+        env.color_seq_green_start = "<G>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        let (r, sioe) = do_execute!(&env, &["-r", "c", "-g", "d", "-r", "e"], "abcdefg");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "ab<R>c<E><G>d<E><R>e<E>fg\n");
+        assert_eq!(r.is_ok(), true);
+    }
+}
 mod test_3 {
     /*
     use libaki_mcolor::*;

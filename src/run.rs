@@ -5,26 +5,28 @@ use runnel::RunnelIoe;
 use std::io::{BufRead, Write};
 
 macro_rules! make_color_and_regex {
-    ($vec:expr, $pattern:expr, $color:expr) => {{
-        if !$pattern.is_empty() {
-            let re = Regex::new(&$pattern)?;
-            $vec.push(ColorAndRegex {
-                color: $color,
-                regex: re,
-            });
+    ($vec:expr, $patterns:expr, $color:expr) => {{
+        if !$patterns.is_empty() {
+            for pattern in $patterns {
+                let re = Regex::new(&pattern)?;
+                $vec.push(ColorAndRegex {
+                    color: $color,
+                    regex: re,
+                });
+            }
         }
     }};
 }
 
 pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf, env: &EnvConf) -> anyhow::Result<()> {
     let mut colregs: Vec<ColorAndRegex> = Vec::new();
-    make_color_and_regex!(colregs, conf.opt_red, Color::Red);
-    make_color_and_regex!(colregs, conf.opt_green, Color::Green);
-    make_color_and_regex!(colregs, conf.opt_blue, Color::Blue);
-    make_color_and_regex!(colregs, conf.opt_cyan, Color::Cyan);
-    make_color_and_regex!(colregs, conf.opt_magenda, Color::Magenda);
-    make_color_and_regex!(colregs, conf.opt_yellow, Color::Yellow);
-    make_color_and_regex!(colregs, conf.opt_unmark, Color::None);
+    make_color_and_regex!(colregs, &conf.opt_red, Color::Red);
+    make_color_and_regex!(colregs, &conf.opt_green, Color::Green);
+    make_color_and_regex!(colregs, &conf.opt_blue, Color::Blue);
+    make_color_and_regex!(colregs, &conf.opt_cyan, Color::Cyan);
+    make_color_and_regex!(colregs, &conf.opt_magenda, Color::Magenda);
+    make_color_and_regex!(colregs, &conf.opt_yellow, Color::Yellow);
+    make_color_and_regex!(colregs, &conf.opt_unmark, Color::None);
     //
     let r = do_match_proc(sioe, conf, env, &colregs);
     if r.is_broken_pipe() {

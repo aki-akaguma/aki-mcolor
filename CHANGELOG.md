@@ -2,6 +2,12 @@ TBD: aki-mcolor
 ===
 Unreleased changes. Release notes have not yet been written.
 
+0.1.30 (2022-06-27)
+=====
+
+* adds support multiple match exp
+* adds multi color match to test
+
 0.1.29 (2022-06-18)
 =====
 

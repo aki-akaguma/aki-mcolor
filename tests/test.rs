@@ -202,7 +202,41 @@ mod test_1 {
         assert_eq!(oup.status.success(), true);
     }
 }
-
+mod test_2 {
+    use exec_target::exec_target_with_env_in;
+    //use exec_target::args_from;
+    const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;
+    use std::collections::HashMap;
+    //
+    #[test]
+    fn test_red_green() {
+        let mut env: HashMap<String, String> = HashMap::new();
+        env.insert("AKI_MCOLOR_COLOR_SEQ_RED_ST".to_string(), "<R>".to_string());
+        env.insert(
+            "AKI_MCOLOR_COLOR_SEQ_GREEN_ST".to_string(),
+            "<G>".to_string(),
+        );
+        env.insert("AKI_MCOLOR_COLOR_SEQ_ED".to_string(), "<E>".to_string());
+        let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-r", "c", "-g", "d"], env, b"abcdefg" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "ab<R>c<E><G>d<E>efg\n");
+        assert_eq!(oup.status.success(), true);
+    }
+    #[test]
+    fn test_red_green_red() {
+        let mut env: HashMap<String, String> = HashMap::new();
+        env.insert("AKI_MCOLOR_COLOR_SEQ_RED_ST".to_string(), "<R>".to_string());
+        env.insert(
+            "AKI_MCOLOR_COLOR_SEQ_GREEN_ST".to_string(),
+            "<G>".to_string(),
+        );
+        env.insert("AKI_MCOLOR_COLOR_SEQ_ED".to_string(), "<E>".to_string());
+        let oup = exec_target_with_env_in(TARGET_EXE_PATH, &["-r", "c", "-g", "d", "-r", "e", ], env, b"abcdefg" as &[u8]);
+        assert_eq!(oup.stderr, "");
+        assert_eq!(oup.stdout, "ab<R>c<E><G>d<E><R>e<E>fg\n");
+        assert_eq!(oup.status.success(), true);
+    }
+}
 mod test_3 {
     use exec_target::exec_target;
     const TARGET_EXE_PATH: &'static str = super::TARGET_EXE_PATH;

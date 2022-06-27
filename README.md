@@ -93,6 +93,14 @@ result output :
 
 - [aki-mline](https://crates.io/crates/aki-mline): extract match line command like grep.
 
+### Command line example 3
+
+You can also multiple same color match.
+
+```
+echo "abcdefg" | aki-mcolor -r "c" -g "d" -r "e"
+```
+
 ## Library example
 
 See [`fn execute()`] for this library examples.
