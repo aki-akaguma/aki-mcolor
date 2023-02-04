@@ -74,7 +74,9 @@ macro_rules! do_execute {
     ($args:expr, $sin:expr) => {{
         let sioe = RunnelIoe::new(
             Box::new(StringIn::with_str($sin)),
+            #[allow(clippy::box_default)]
             Box::new(StringOut::default()),
+            #[allow(clippy::box_default)]
             Box::new(StringErr::default()),
         );
         let program = env!("CARGO_PKG_NAME");
@@ -93,7 +95,9 @@ macro_rules! do_execute {
     ($env:expr, $args:expr, $sin:expr) => {{
         let sioe = RunnelIoe::new(
             Box::new(StringIn::with_str($sin)),
+            #[allow(clippy::box_default)]
             Box::new(StringOut::default()),
+            #[allow(clippy::box_default)]
             Box::new(StringErr::default()),
         );
         let program = env!("CARGO_PKG_NAME");
@@ -131,28 +135,28 @@ mod test_0_s {
         let (r, sioe) = do_execute!(&["-H"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_help_long() {
         let (r, sioe) = do_execute!(&["--help"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_version() {
         let (r, sioe) = do_execute!(&["-V"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_version_long() {
         let (r, sioe) = do_execute!(&["--version"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_non_option() {
@@ -168,7 +172,7 @@ mod test_0_s {
             )
         );
         assert_eq!(buff!(sioe, sout), "");
-        assert_eq!(r.is_ok(), false);
+        assert!(r.is_err());
     }
 }
 
@@ -186,7 +190,7 @@ mod test_1_s {
         let (r, sioe) = do_execute!(&env, &["-r", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_green() {
@@ -196,7 +200,7 @@ mod test_1_s {
         let (r, sioe) = do_execute!(&env, &["-g", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_blue() {
@@ -206,7 +210,7 @@ mod test_1_s {
         let (r, sioe) = do_execute!(&env, &["-b", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_cyan() {
@@ -216,7 +220,7 @@ mod test_1_s {
         let (r, sioe) = do_execute!(&env, &["-c", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_magenda() {
@@ -226,7 +230,7 @@ mod test_1_s {
         let (r, sioe) = do_execute!(&env, &["-m", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_yellow() {
@@ -236,7 +240,7 @@ mod test_1_s {
         let (r, sioe) = do_execute!(&env, &["-y", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
 }
 mod test_2_s {
@@ -254,7 +258,7 @@ mod test_2_s {
         let (r, sioe) = do_execute!(&env, &["-r", "c", "-g", "d"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<R>c<E><G>d<E>efg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
     #[test]
     fn test_red_green_red() {
@@ -265,7 +269,7 @@ mod test_2_s {
         let (r, sioe) = do_execute!(&env, &["-r", "c", "-g", "d", "-r", "e"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<R>c<E><G>d<E><R>e<E>fg\n");
-        assert_eq!(r.is_ok(), true);
+        assert!(r.is_ok());
     }
 }
 mod test_3 {
