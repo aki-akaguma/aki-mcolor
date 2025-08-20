@@ -2,7 +2,7 @@ use crate::conf::{CmdOptConf, Color, ColorAndRegex, EnvConf};
 use crate::util::err::BrokenPipeError;
 use regex::Regex;
 use runnel::RunnelIoe;
-use std::io::{BufRead, Write};
+//use std::io::Write;
 
 macro_rules! make_color_and_regex {
     ($vec:expr, $patterns:expr, $color:expr) => {{
@@ -53,6 +53,22 @@ fn do_match_proc(
     env: &EnvConf,
     colregs: &[ColorAndRegex],
 ) -> anyhow::Result<()> {
+    for line in sioe.pg_in().lines() {
+        let line_s = line?;
+        do_match_proc_0(sioe, _conf, env, colregs, line_s)?;
+    }
+    //
+    sioe.pg_out().flush_line()?;
+    Ok(())
+}
+
+fn do_match_proc_0(
+    sioe: &RunnelIoe,
+    _conf: &CmdOptConf,
+    env: &EnvConf,
+    colregs: &[ColorAndRegex],
+    line_s: String,
+) -> anyhow::Result<()> {
     //let color_start_s = env.color_seq_red_start.as_str();
     let color_end_s = env.color_seq_end.as_str();
     /*
@@ -60,68 +76,60 @@ fn do_match_proc(
     let color_end_s = "<E>";
     */
     //
-    for line in sioe.pin().lock().lines() {
-        let line_s = line?;
-        let line_ss = line_s.as_str();
-        let line_len: usize = line_ss.len();
-        //
-        let mut line_color_mark: Vec<Color> = Vec::with_capacity(line_len);
-        line_color_mark.resize(line_len, Color::None);
-        let mut b_found = false;
-        //
-        for colreg in colregs {
-            let color = colreg.color;
-            let re = &colreg.regex;
-            for cap in re.captures_iter(line_ss) {
-                b_found = true;
-                //
-                let cap_len = cap.len();
-                let (st, ed): (usize, usize) = match cap.get(usize::from(cap_len > 1)) {
-                    Some(m) => (m.start(), m.end()),
-                    None => (0, 0),
-                };
-                for m in line_color_mark.iter_mut().take(ed).skip(st) {
-                    *m = color;
-                }
-            }
-        }
-        if b_found {
+    let line_ss = line_s.as_str();
+    let line_len: usize = line_ss.len();
+    //
+    let mut line_color_mark: Vec<Color> = Vec::with_capacity(line_len);
+    line_color_mark.resize(line_len, Color::None);
+    let mut b_found = false;
+    //
+    for colreg in colregs {
+        let color = colreg.color;
+        let re = &colreg.regex;
+        for cap in re.captures_iter(line_ss) {
+            b_found = true;
             //
-            let mut out_s: String = String::new();
-            let mut color = Color::None;
-            let mut st: usize = 0;
-            loop {
-                let next_pos = match line_color_mark.iter().skip(st).position(|c| *c != color) {
-                    Some(pos) => st + pos,
-                    None => line_len,
-                };
-                if st != next_pos {
-                    if color != Color::None {
-                        let color_start_s = color_seq(env, color);
-                        out_s.push_str(color_start_s);
-                    }
-                    out_s.push_str(&line_ss[st..next_pos]);
-                    if color != Color::None {
-                        out_s.push_str(color_end_s);
-                    }
-                }
-                //
-                if next_pos >= line_len {
-                    break;
-                }
-                st = next_pos;
-                color = line_color_mark[st];
+            let cap_len = cap.len();
+            let (st, ed): (usize, usize) = match cap.get(usize::from(cap_len > 1)) {
+                Some(m) => (m.start(), m.end()),
+                None => (0, 0),
+            };
+            for m in line_color_mark.iter_mut().take(ed).skip(st) {
+                *m = color;
             }
-            //
-            #[rustfmt::skip]
-            sioe.pout().lock().write_fmt(format_args!("{out_s}\n"))?;
-        } else {
-            #[rustfmt::skip]
-            sioe.pout().lock().write_fmt(format_args!("{line_ss}\n"))?;
         }
     }
-    //
-    sioe.pout().lock().flush()?;
-    //
+    if b_found {
+        //
+        let mut out_s: String = String::new();
+        let mut color = Color::None;
+        let mut st: usize = 0;
+        loop {
+            let next_pos = match line_color_mark.iter().skip(st).position(|c| *c != color) {
+                Some(pos) => st + pos,
+                None => line_len,
+            };
+            if st != next_pos {
+                if color != Color::None {
+                    let color_start_s = color_seq(env, color);
+                    out_s.push_str(color_start_s);
+                }
+                out_s.push_str(&line_ss[st..next_pos]);
+                if color != Color::None {
+                    out_s.push_str(color_end_s);
+                }
+            }
+            //
+            if next_pos >= line_len {
+                break;
+            }
+            st = next_pos;
+            color = line_color_mark[st];
+        }
+        //
+        sioe.pg_out().write_line(out_s)?;
+    } else {
+        sioe.pg_out().write_line(line_s)?;
+    }
     Ok(())
 }
