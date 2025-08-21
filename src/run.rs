@@ -35,15 +35,27 @@ pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf, env: &EnvConf) -> anyhow::Result
     r
 }
 
-fn color_seq(env: &EnvConf, color: Color) -> &str {
-    match color {
-        Color::None => "",
-        Color::Red => env.color_seq_red_start.as_str(),
-        Color::Green => env.color_seq_green_start.as_str(),
-        Color::Blue => env.color_seq_blue_start.as_str(),
-        Color::Cyan => env.color_seq_cyan_start.as_str(),
-        Color::Magenda => env.color_seq_magenda_start.as_str(),
-        Color::Yellow => env.color_seq_yellow_start.as_str(),
+#[derive(Debug)]
+struct ColorSeq<'a> {
+    env: &'a EnvConf,
+}
+impl<'a> ColorSeq<'a> {
+    fn new(env: &'a EnvConf) -> Self {
+        Self { env }
+    }
+    fn color_seq_start(&self, color: Color) -> &str {
+        match color {
+            Color::None => "",
+            Color::Red => self.env.color_seq_red_start.as_str(),
+            Color::Green => self.env.color_seq_green_start.as_str(),
+            Color::Blue => self.env.color_seq_blue_start.as_str(),
+            Color::Cyan => self.env.color_seq_cyan_start.as_str(),
+            Color::Magenda => self.env.color_seq_magenda_start.as_str(),
+            Color::Yellow => self.env.color_seq_yellow_start.as_str(),
+        }
+    }
+    fn color_seq_end(&self) -> &str {
+        self.env.color_seq_end.as_str()
     }
 }
 
@@ -53,32 +65,29 @@ fn do_match_proc(
     env: &EnvConf,
     colregs: &[ColorAndRegex],
 ) -> anyhow::Result<()> {
+    let color_seq = ColorSeq::new(env);
     for line in sioe.pg_in().lines() {
         let line_s = line?;
-        do_match_proc_0(sioe, _conf, env, colregs, line_s)?;
+        let line_ss = line_s.as_str();
+        //
+        let (b_found, line_color_mark) = make_line_color_mark(colregs, line_ss)?;
+        if b_found {
+            let out_s = make_out_s(&color_seq, line_ss, &line_color_mark)?;
+            sioe.pg_out().write_line(out_s)?;
+        } else {
+            sioe.pg_out().write_line(line_s)?;
+        }
     }
     //
     sioe.pg_out().flush_line()?;
     Ok(())
 }
 
-fn do_match_proc_0(
-    sioe: &RunnelIoe,
-    _conf: &CmdOptConf,
-    env: &EnvConf,
+fn make_line_color_mark(
     colregs: &[ColorAndRegex],
-    line_s: String,
-) -> anyhow::Result<()> {
-    //let color_start_s = env.color_seq_red_start.as_str();
-    let color_end_s = env.color_seq_end.as_str();
-    /*
-    let color_start_s = "<S>";
-    let color_end_s = "<E>";
-    */
-    //
-    let line_ss = line_s.as_str();
+    line_ss: &str,
+) -> anyhow::Result<(bool, Vec<Color>)> {
     let line_len: usize = line_ss.len();
-    //
     let mut line_color_mark: Vec<Color> = Vec::with_capacity(line_len);
     line_color_mark.resize(line_len, Color::None);
     let mut b_found = false;
@@ -99,37 +108,45 @@ fn do_match_proc_0(
             }
         }
     }
-    if b_found {
-        //
-        let mut out_s: String = String::new();
-        let mut color = Color::None;
-        let mut st: usize = 0;
-        loop {
-            let next_pos = match line_color_mark.iter().skip(st).position(|c| *c != color) {
-                Some(pos) => st + pos,
-                None => line_len,
-            };
-            if st != next_pos {
-                if color != Color::None {
-                    let color_start_s = color_seq(env, color);
-                    out_s.push_str(color_start_s);
-                }
-                out_s.push_str(&line_ss[st..next_pos]);
-                if color != Color::None {
-                    out_s.push_str(color_end_s);
-                }
+    Ok((b_found, line_color_mark))
+}
+
+fn make_out_s(
+    color_seq: &ColorSeq,
+    line_ss: &str,
+    line_color_mark: &[Color],
+) -> anyhow::Result<String> {
+    /*
+    let color_start_s = "<S>";
+    let color_end_s = "<E>";
+    */
+    let color_end_s = color_seq.color_seq_end();
+    let line_len: usize = line_ss.len();
+    //
+    let mut out_s: String = String::new();
+    let mut color = Color::None;
+    let mut st: usize = 0;
+    loop {
+        let next_pos = match line_color_mark.iter().skip(st).position(|c| *c != color) {
+            Some(pos) => st + pos,
+            None => line_len,
+        };
+        if st != next_pos {
+            if color != Color::None {
+                let color_start_s = color_seq.color_seq_start(color);
+                out_s.push_str(color_start_s);
             }
-            //
-            if next_pos >= line_len {
-                break;
+            out_s.push_str(&line_ss[st..next_pos]);
+            if color != Color::None {
+                out_s.push_str(color_end_s);
             }
-            st = next_pos;
-            color = line_color_mark[st];
         }
         //
-        sioe.pg_out().write_line(out_s)?;
-    } else {
-        sioe.pg_out().write_line(line_s)?;
+        if next_pos >= line_len {
+            break;
+        }
+        st = next_pos;
+        color = line_color_mark[st];
     }
-    Ok(())
+    Ok(out_s)
 }
