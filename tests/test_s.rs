@@ -1,71 +1,5 @@
-macro_rules! help_msg {
-    () => {
-        concat!(
-            version_msg!(),
-            "\n",
-            indoc::indoc!(
-                r#"
-            Usage:
-              aki-mcolor [options]
-
-            mark up text with color
-
-            Options:
-              -r, --red <exp>       write it in red
-              -g, --green <exp>     write it in green
-              -b, --blue <exp>      write it in blue
-              -c, --cyan <exp>      write it in cyan
-              -m, --magenda <exp>   write it in magenda
-              -y, --yellow <exp>    write it in yellow
-              -u, --unmark <exp>    write it in non-color
-
-              -H, --help        display this help and exit
-              -V, --version     display version information and exit
-              -X <x-options>    x options. try -X help
-
-            Option Parameters:
-              <exp>     regular expression, color the entire match. 
-
-            Environments:
-              AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi
-              AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi
-              AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi
-              AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi
-              AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi
-              AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi
-              AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi
-            "#
-            ),
-            "\n"
-        )
-    };
-}
-
-macro_rules! try_help_msg {
-    () => {
-        "Try --help for help.\n"
-    };
-}
-
-macro_rules! program_name {
-    () => {
-        "aki-mcolor"
-    };
-}
-
-macro_rules! version_msg {
-    () => {
-        concat!(program_name!(), " ", env!("CARGO_PKG_VERSION"), "\n")
-    };
-}
-
-/*
-macro_rules! fixture_text10k {
-    () => {
-        "fixtures/text10k.txt"
-    };
-}
-*/
+#[macro_use]
+mod helper;
 
 macro_rules! do_execute {
     ($args:expr) => {
@@ -124,6 +58,20 @@ macro_rules! buff {
     };
 }
 
+macro_rules! env_1 {
+    () => {{
+        let mut env = conf::EnvConf::new();
+        env.color_seq_red_start = "<R>".to_string();
+        env.color_seq_green_start = "<G>".to_string();
+        env.color_seq_blue_start = "<B>".to_string();
+        env.color_seq_cyan_start = "<C>".to_string();
+        env.color_seq_magenda_start = "<M>".to_string();
+        env.color_seq_yellow_start = "<Y>".to_string();
+        env.color_seq_end = "<E>".to_string();
+        env
+    }};
+}
+
 mod test_0_s {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
@@ -132,35 +80,51 @@ mod test_0_s {
     //
     #[test]
     fn test_help() {
-        let (r, sioe) = do_execute!(&["-H"]);
+        let (r, sioe) = do_execute!(["-H"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
         assert!(r.is_ok());
     }
     #[test]
     fn test_help_long() {
-        let (r, sioe) = do_execute!(&["--help"]);
+        let (r, sioe) = do_execute!(["--help"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), help_msg!());
         assert!(r.is_ok());
     }
     #[test]
     fn test_version() {
-        let (r, sioe) = do_execute!(&["-V"]);
+        let (r, sioe) = do_execute!(["-V"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
         assert!(r.is_ok());
     }
     #[test]
     fn test_version_long() {
-        let (r, sioe) = do_execute!(&["--version"]);
+        let (r, sioe) = do_execute!(["--version"]);
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), version_msg!());
         assert!(r.is_ok());
     }
     #[test]
+    fn test_invalid_opt() {
+        let (r, sioe) = do_execute!(["-z"]);
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(
+                program_name!(),
+                ": ",
+                "Invalid option: z\n",
+                "Missing option: r|g|b|c|m|y|u\n",
+                try_help_msg!()
+            )
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    #[test]
     fn test_non_option() {
-        let (r, sioe) = do_execute!(&[""]);
+        let (r, sioe) = do_execute!([""]);
         #[rustfmt::skip]
         assert_eq!(
             buff!(sioe, serr),
@@ -176,6 +140,47 @@ mod test_0_s {
     }
 }
 
+mod test_0_x_options_s {
+    use libaki_mcolor::*;
+    use runnel::medium::stringio::*;
+    use runnel::*;
+    //
+    #[test]
+    fn test_x_rust_version_info() {
+        let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
+        assert_eq!(buff!(sioe, serr), "");
+        assert!(!buff!(sioe, sout).is_empty());
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_x_option_help() {
+        let (r, sioe) = do_execute!(["-X", "help"]);
+        assert_eq!(buff!(sioe, serr), "");
+        assert!(buff!(sioe, sout).contains("Options:"));
+        assert!(buff!(sioe, sout).contains("-X rust-version-info"));
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_x_option_rust_version_info() {
+        let (r, sioe) = do_execute!(["-X", "rust-version-info"]);
+        assert_eq!(buff!(sioe, serr), "");
+        assert!(buff!(sioe, sout).contains("rustc"));
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_multiple_x_options() {
+        let (r, sioe) = do_execute!(["-X", "help", "-X", "rust-version-info"]);
+        assert_eq!(buff!(sioe, serr), "");
+        // The first one should be executed and the program should exit.
+        assert!(buff!(sioe, sout).contains("Options:"));
+        assert!(!buff!(sioe, sout).contains("rustc"));
+        assert!(r.is_ok());
+    }
+}
+
 mod test_1_s {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
@@ -184,65 +189,75 @@ mod test_1_s {
     //
     #[test]
     fn test_red() {
-        let mut env = conf::EnvConf::new();
-        env.color_seq_red_start = "<S>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        let (r, sioe) = do_execute!(&env, &["-r", "c"], "abcdefg");
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(buff!(sioe, sout), "ab<R>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_green() {
-        let mut env = conf::EnvConf::new();
-        env.color_seq_green_start = "<S>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        let (r, sioe) = do_execute!(&env, &["-g", "c"], "abcdefg");
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-g", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(buff!(sioe, sout), "ab<G>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_blue() {
-        let mut env = conf::EnvConf::new();
-        env.color_seq_blue_start = "<S>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        let (r, sioe) = do_execute!(&env, &["-b", "c"], "abcdefg");
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-b", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(buff!(sioe, sout), "ab<B>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_cyan() {
-        let mut env = conf::EnvConf::new();
-        env.color_seq_cyan_start = "<S>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        let (r, sioe) = do_execute!(&env, &["-c", "c"], "abcdefg");
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-c", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(buff!(sioe, sout), "ab<C>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_magenda() {
-        let mut env = conf::EnvConf::new();
-        env.color_seq_magenda_start = "<S>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        let (r, sioe) = do_execute!(&env, &["-m", "c"], "abcdefg");
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-m", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(buff!(sioe, sout), "ab<M>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_yellow() {
-        let mut env = conf::EnvConf::new();
-        env.color_seq_yellow_start = "<S>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        let (r, sioe) = do_execute!(&env, &["-y", "c"], "abcdefg");
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-y", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
-        assert_eq!(buff!(sioe, sout), "ab<S>c<E>defg\n");
+        assert_eq!(buff!(sioe, sout), "ab<Y>c<E>defg\n");
         assert!(r.is_ok());
     }
+    //
+    /*
+    #[test]
+    fn test_invalid_utf8() {
+        let v = {
+            use std::io::Read;
+            let mut f = std::fs::File::open(fixture_invalid_utf8!()).unwrap();
+            let mut v = Vec::new();
+            f.read_to_end(&mut v).unwrap();
+            v
+        };
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a"], &v);
+        assert_eq!(
+            buff!(sioe, serr),
+            concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
+        );
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    */
 }
+
 mod test_2_s {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
@@ -251,27 +266,22 @@ mod test_2_s {
     //
     #[test]
     fn test_red_green() {
-        let mut env = conf::EnvConf::new();
-        env.color_seq_red_start = "<R>".to_string();
-        env.color_seq_green_start = "<G>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        let (r, sioe) = do_execute!(&env, &["-r", "c", "-g", "d"], "abcdefg");
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "c", "-g", "d"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<R>c<E><G>d<E>efg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_red_green_red() {
-        let mut env = conf::EnvConf::new();
-        env.color_seq_red_start = "<R>".to_string();
-        env.color_seq_green_start = "<G>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        let (r, sioe) = do_execute!(&env, &["-r", "c", "-g", "d", "-r", "e"], "abcdefg");
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "c", "-g", "d", "-r", "e"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<R>c<E><G>d<E><R>e<E>fg\n");
         assert!(r.is_ok());
     }
 }
+
 mod test_3 {
     /*
     use libaki_mcolor::*;
