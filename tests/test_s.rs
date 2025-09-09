@@ -258,6 +258,110 @@ mod test_1_s {
     */
 }
 
+mod test_1_more_s {
+    use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    #[test]
+    fn test_unmark() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a.c", "-u", "b"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>a<E>b<R>c<E>de\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_multiple_colors_same_line() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a", "-g", "b", "-b", "c"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>a<E><G>b<E><B>c<E>de\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_pattern_not_found() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "z"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "abcde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_empty_input() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a"], "");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_pattern_at_beginning() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>a<E>bcde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_pattern_at_end() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "e"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "abcd<R>e<E>\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_multiple_lines() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a"], "abc\ndefa");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>a<E>bc\ndef<R>a<E>\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_all_colors() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(
+            &env,
+            ["-r", "a", "-g", "b", "-b", "c", "-c", "d", "-m", "e", "-y", "f", "-u", "g"],
+            "abcdefg"
+        );
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(
+            buff!(sioe, sout),
+            "<R>a<E><G>b<E><B>c<E><C>d<E><M>e<E><Y>f<E>g\n"
+        );
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_overlapping_matches() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "ab", "-g", "bc"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>a<E><G>bc<E>de\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_complex_regex() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a[bc]d"], "abde abd acde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>abd<E>e <R>abd<E> <R>acd<E>e\n");
+        assert!(r.is_ok());
+    }
+}
+
 mod test_2_s {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
@@ -282,6 +386,49 @@ mod test_2_s {
     }
 }
 
+mod test_2_more_s {
+    use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    #[test]
+    fn test_long_options() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["--red", "a", "--green", "b"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>a<E><G>b<E>cde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_mix_short_long_options() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a", "--green", "b"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>a<E><G>b<E>cde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_no_matches() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "z"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "abcde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_utf8_chars() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "あ"], "あいうえお");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>あ<E>いうえお\n");
+        assert!(r.is_ok());
+    }
+}
+
 mod test_3 {
     /*
     use libaki_mcolor::*;
@@ -291,6 +438,174 @@ mod test_3 {
      * can NOT test
     #[test]
     fn test_output_broken_pipe() {
+    }
+    */
+}
+
+mod test_3_more {
+    use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    #[test]
+    fn test_single_capture_group() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a(b)c"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "a<R>b<E>cde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_multiple_capture_groups() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a(b)c(d)"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "a<R>b<E>cde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_no_capture_group() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "abc"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>abc<E>de\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_nested_capture_groups() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a((b)c)d"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "a<R>bc<E>de\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_empty_capture_group() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a()c"], "acde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "acde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_optional_capture_group_match() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a(b)?c"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "a<R>b<E>cde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_optional_capture_group_no_match() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a(b)?c"], "acde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "acde\n");
+        assert!(r.is_ok());
+    }
+}
+
+mod test_4_more {
+    use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    #[test]
+    fn test_invalid_regex() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "*"], "");
+        assert!(buff!(sioe, serr).contains("regex parse error"));
+        assert_eq!(buff!(sioe, sout), "");
+        assert!(r.is_err());
+    }
+    //
+    #[test]
+    fn test_large_input() {
+        let mut large_input = String::new();
+        for i in 0..1000 {
+            large_input.push_str(&format!("line {} abc\n", i));
+        }
+        //
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "abc"], &large_input);
+        //
+        let mut expected_output = String::new();
+        for i in 0..1000 {
+            expected_output.push_str(&format!("line {} <R>abc<E>\n", i));
+        }
+        //
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), expected_output);
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_performance() {
+        let mut large_input = String::new();
+        for i in 0..1000 {
+            large_input.push_str(&format!("line {} abcdefghijklmnopqrstuvwxyz\n", i));
+        }
+        //
+        let env = env_1!();
+        let start = std::time::Instant::now();
+        let (r, sioe) = do_execute!(&env, ["-r", "[a-z]+"], &large_input);
+        let duration = start.elapsed();
+        //
+        assert_eq!(buff!(sioe, serr), "");
+        assert!(duration < std::time::Duration::from_secs(1));
+        assert!(r.is_ok());
+    }
+}
+
+mod test_5_more {
+    use libaki_mcolor::*;
+    use runnel::medium::stringio::{StringErr, StringIn, StringOut};
+    use runnel::RunnelIoe;
+    use std::io::Write;
+    //
+    #[test]
+    fn test_env_override() {
+        let mut env = env_1!();
+        env.color_seq_red_start = "[RED]".to_string();
+        env.color_seq_end = "[/RED]".to_string();
+        //
+        let (r, sioe) = do_execute!(&env, ["-r", "a"], "abcde");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "[RED]a[/RED]bcde\n");
+        assert!(r.is_ok());
+    }
+    //
+    #[test]
+    fn test_crlf_line_endings() {
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a"], "abc\r\ndefa");
+        assert_eq!(buff!(sioe, serr), "");
+        assert_eq!(buff!(sioe, sout), "<R>a<E>bc\ndef<R>a<E>\n");
+        assert!(r.is_ok());
+    }
+    //
+    /*
+    #[test]
+    fn test_binary_input() {
+        use std::fs::File;
+        let mut f = File::open(fixture_invalid_utf8!()).unwrap();
+        let mut buffer = Vec::new();
+        f.read_to_end(&mut buffer).unwrap();
+        //
+        let env = env_1!();
+        let (r, sioe) = do_execute!(&env, ["-r", "a"], &buffer);
+        //
+        assert!(buff!(sioe, sout).contains("stream did not contain valid UTF-8"));
+        assert_eq!(buff!(sioe, serr), "");
+        assert!(r.is_err());
     }
     */
 }
