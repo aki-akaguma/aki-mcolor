@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * updated: rust-version-info-file(0.2)
 * updated: regex(1.11)
 * refactored: `run.rs`
+* refactored `lib.rs`
 
 ### Fixed
 * minimum support version in doc

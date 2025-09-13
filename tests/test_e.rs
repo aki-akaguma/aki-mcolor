@@ -3,36 +3,10 @@ const TARGET_EXE_PATH: &str = env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAM
 #[macro_use]
 mod helper;
 
-macro_rules! env_1 {
-    () => {{
-        let mut env: HashMap<String, String> = HashMap::new();
-        env.insert("AKI_MCOLOR_COLOR_SEQ_RED_ST".to_string(), "<R>".to_string());
-        env.insert(
-            "AKI_MCOLOR_COLOR_SEQ_GREEN_ST".to_string(),
-            "<G>".to_string(),
-        );
-        env.insert(
-            "AKI_MCOLOR_COLOR_SEQ_BLUE_ST".to_string(),
-            "<B>".to_string(),
-        );
-        env.insert(
-            "AKI_MCOLOR_COLOR_SEQ_CYAN_ST".to_string(),
-            "<C>".to_string(),
-        );
-        env.insert(
-            "AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST".to_string(),
-            "<M>".to_string(),
-        );
-        env.insert(
-            "AKI_MCOLOR_COLOR_SEQ_YELLOW_ST".to_string(),
-            "<Y>".to_string(),
-        );
-        env.insert("AKI_MCOLOR_COLOR_SEQ_ED".to_string(), "<E>".to_string());
-        env
-    }};
-}
+#[macro_use]
+mod helper_e;
 
-mod test_0 {
+mod test_0_e {
     use exec_target::exec_target;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
@@ -99,7 +73,7 @@ mod test_0 {
     }
 }
 
-mod test_0_x_options {
+mod test_0_x_options_e {
     use exec_target::exec_target;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -107,8 +81,7 @@ mod test_0_x_options {
     fn test_x_option_help() {
         let oup = exec_target(TARGET_EXE_PATH, ["-X", "help"]);
         assert_eq!(oup.stderr, "");
-        assert!(oup.stdout.contains("Options:"));
-        assert!(oup.stdout.contains("-X rust-version-info"));
+        assert_eq!(oup.stdout, x_help_msg!());
         assert!(oup.status.success());
     }
     //
@@ -131,11 +104,10 @@ mod test_0_x_options {
     }
 }
 
-mod test_1 {
+mod test_1_e {
     use exec_target::exec_target_with_env_in;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    use std::collections::HashMap;
     //
     #[test]
     fn test_red() {
@@ -206,10 +178,9 @@ mod test_1 {
     }
 }
 
-mod test_1_more {
+mod test_1_more_e {
     use exec_target::exec_target_with_env_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    use std::collections::HashMap;
     //
     #[test]
     fn test_unmark() {
@@ -329,11 +300,10 @@ mod test_1_more {
     }
 }
 
-mod test_2 {
+mod test_2_e {
     use exec_target::exec_target_with_env_in;
     //use exec_target::args_from;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    use std::collections::HashMap;
     //
     #[test]
     fn test_red_green() {
@@ -363,10 +333,9 @@ mod test_2 {
     }
 }
 
-mod test_2_more {
+mod test_2_more_e {
     use exec_target::exec_target_with_env_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    use std::collections::HashMap;
     //
     #[test]
     fn test_long_options() {
@@ -416,7 +385,7 @@ mod test_2_more {
     }
 }
 
-mod test_3 {
+mod test_3_e {
     use exec_target::exec_target;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
     //
@@ -434,10 +403,9 @@ mod test_3 {
     }
 }
 
-mod test_3_more {
+mod test_3_more_e {
     use exec_target::exec_target_with_env_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    use std::collections::HashMap;
     //
     #[test]
     fn test_single_capture_group() {
@@ -506,10 +474,9 @@ mod test_3_more {
     }
 }
 
-mod test_4_more {
+mod test_4_more_e {
     use exec_target::{exec_target_with_env, exec_target_with_env_in};
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    use std::collections::HashMap;
     //
     #[test]
     fn test_invalid_regex() {
@@ -564,21 +531,17 @@ mod test_4_more {
     }
 }
 
-mod test_5_more {
+mod test_5_more_e {
     use exec_target::exec_target_with_env_in;
     const TARGET_EXE_PATH: &str = super::TARGET_EXE_PATH;
-    use std::collections::HashMap;
     use std::fs::File;
     use std::io::Read;
     //
     #[test]
     fn test_env_override() {
         let mut env = env_1!();
-        env.insert(
-            "AKI_MCOLOR_COLOR_SEQ_RED_ST".to_string(),
-            "[RED]".to_string(),
-        );
-        env.insert("AKI_MCOLOR_COLOR_SEQ_ED".to_string(), "[/RED]".to_string());
+        env.push(("AKI_MCOLOR_COLOR_SEQ_RED_ST", "[RED]"));
+        env.push(("AKI_MCOLOR_COLOR_SEQ_ED", "[/RED]"));
         //
         let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env, b"abcde" as &[u8]);
         assert_eq!(oup.stderr, "");

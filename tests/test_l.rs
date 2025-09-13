@@ -1,78 +1,10 @@
 #[macro_use]
 mod helper;
 
-macro_rules! do_execute {
-    ($args:expr) => {
-        do_execute!($args, "")
-    };
-    ($args:expr, $sin:expr) => {{
-        let sioe = RunnelIoe::new(
-            Box::new(StringIn::with_str($sin)),
-            #[allow(clippy::box_default)]
-            Box::new(StringOut::default()),
-            #[allow(clippy::box_default)]
-            Box::new(StringErr::default()),
-        );
-        let program = env!("CARGO_PKG_NAME");
-        let r = execute(&sioe, &program, $args);
-        match r {
-            Ok(_) => {}
-            Err(ref err) => {
-                let _ = sioe
-                    .pg_err()
-                    .lock()
-                    .write_fmt(format_args!("{}: {}\n", program, err));
-            }
-        };
-        (r, sioe)
-    }};
-    ($env:expr, $args:expr, $sin:expr) => {{
-        let sioe = RunnelIoe::new(
-            Box::new(StringIn::with_str($sin)),
-            #[allow(clippy::box_default)]
-            Box::new(StringOut::default()),
-            #[allow(clippy::box_default)]
-            Box::new(StringErr::default()),
-        );
-        let program = env!("CARGO_PKG_NAME");
-        let r = execute_env(&sioe, &program, $args, $env);
-        match r {
-            Ok(_) => {}
-            Err(ref err) => {
-                let _ = sioe
-                    .pg_err()
-                    .lock()
-                    .write_fmt(format_args!("{}: {}\n", program, err));
-            }
-        };
-        (r, sioe)
-    }};
-}
+#[macro_use]
+mod helper_l;
 
-macro_rules! buff {
-    ($sioe:expr, serr) => {
-        $sioe.pg_err().lock().buffer_to_string()
-    };
-    ($sioe:expr, sout) => {
-        $sioe.pg_out().lock().buffer_to_string()
-    };
-}
-
-macro_rules! env_1 {
-    () => {{
-        let mut env = conf::EnvConf::new();
-        env.color_seq_red_start = "<R>".to_string();
-        env.color_seq_green_start = "<G>".to_string();
-        env.color_seq_blue_start = "<B>".to_string();
-        env.color_seq_cyan_start = "<C>".to_string();
-        env.color_seq_magenda_start = "<M>".to_string();
-        env.color_seq_yellow_start = "<Y>".to_string();
-        env.color_seq_end = "<E>".to_string();
-        env
-    }};
-}
-
-mod test_0_s {
+mod test_0_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
@@ -140,7 +72,7 @@ mod test_0_s {
     }
 }
 
-mod test_0_x_options_s {
+mod test_0_x_options_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::*;
     use runnel::*;
@@ -157,8 +89,7 @@ mod test_0_x_options_s {
     fn test_x_option_help() {
         let (r, sioe) = do_execute!(["-X", "help"]);
         assert_eq!(buff!(sioe, serr), "");
-        assert!(buff!(sioe, sout).contains("Options:"));
-        assert!(buff!(sioe, sout).contains("-X rust-version-info"));
+        assert_eq!(buff!(sioe, sout), x_help_msg!());
         assert!(r.is_ok());
     }
     //
@@ -181,7 +112,7 @@ mod test_0_x_options_s {
     }
 }
 
-mod test_1_s {
+mod test_1_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -189,48 +120,42 @@ mod test_1_s {
     //
     #[test]
     fn test_red() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "c"], "abcdefg");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<R>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_green() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-g", "c"], "abcdefg");
+        let (r, sioe) = do_execute!(env_1!(), ["-g", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<G>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_blue() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-b", "c"], "abcdefg");
+        let (r, sioe) = do_execute!(env_1!(), ["-b", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<B>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_cyan() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-c", "c"], "abcdefg");
+        let (r, sioe) = do_execute!(env_1!(), ["-c", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<C>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_magenda() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-m", "c"], "abcdefg");
+        let (r, sioe) = do_execute!(env_1!(), ["-m", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<M>c<E>defg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_yellow() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-y", "c"], "abcdefg");
+        let (r, sioe) = do_execute!(env_1!(), ["-y", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<Y>c<E>defg\n");
         assert!(r.is_ok());
@@ -246,8 +171,7 @@ mod test_1_s {
             f.read_to_end(&mut v).unwrap();
             v
         };
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a"], &v);
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a"], &v);
         assert_eq!(
             buff!(sioe, serr),
             concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
@@ -258,7 +182,7 @@ mod test_1_s {
     */
 }
 
-mod test_1_more_s {
+mod test_1_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -266,8 +190,7 @@ mod test_1_more_s {
     //
     #[test]
     fn test_unmark() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a.c", "-u", "b"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a.c", "-u", "b"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>a<E>b<R>c<E>de\n");
         assert!(r.is_ok());
@@ -275,8 +198,7 @@ mod test_1_more_s {
     //
     #[test]
     fn test_multiple_colors_same_line() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a", "-g", "b", "-b", "c"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a", "-g", "b", "-b", "c"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>a<E><G>b<E><B>c<E>de\n");
         assert!(r.is_ok());
@@ -284,8 +206,7 @@ mod test_1_more_s {
     //
     #[test]
     fn test_pattern_not_found() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "z"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "z"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "abcde\n");
         assert!(r.is_ok());
@@ -293,8 +214,7 @@ mod test_1_more_s {
     //
     #[test]
     fn test_empty_input() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a"], "");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a"], "");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_ok());
@@ -302,8 +222,7 @@ mod test_1_more_s {
     //
     #[test]
     fn test_pattern_at_beginning() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>a<E>bcde\n");
         assert!(r.is_ok());
@@ -311,8 +230,7 @@ mod test_1_more_s {
     //
     #[test]
     fn test_pattern_at_end() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "e"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "e"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "abcd<R>e<E>\n");
         assert!(r.is_ok());
@@ -320,8 +238,7 @@ mod test_1_more_s {
     //
     #[test]
     fn test_multiple_lines() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a"], "abc\ndefa");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a"], "abc\ndefa");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>a<E>bc\ndef<R>a<E>\n");
         assert!(r.is_ok());
@@ -329,9 +246,8 @@ mod test_1_more_s {
     //
     #[test]
     fn test_all_colors() {
-        let env = env_1!();
         let (r, sioe) = do_execute!(
-            &env,
+            env_1!(),
             ["-r", "a", "-g", "b", "-b", "c", "-c", "d", "-m", "e", "-y", "f", "-u", "g"],
             "abcdefg"
         );
@@ -345,8 +261,7 @@ mod test_1_more_s {
     //
     #[test]
     fn test_overlapping_matches() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "ab", "-g", "bc"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "ab", "-g", "bc"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>a<E><G>bc<E>de\n");
         assert!(r.is_ok());
@@ -354,15 +269,14 @@ mod test_1_more_s {
     //
     #[test]
     fn test_complex_regex() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a[bc]d"], "abde abd acde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a[bc]d"], "abde abd acde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>abd<E>e <R>abd<E> <R>acd<E>e\n");
         assert!(r.is_ok());
     }
 }
 
-mod test_2_s {
+mod test_2_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -370,23 +284,21 @@ mod test_2_s {
     //
     #[test]
     fn test_red_green() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "c", "-g", "d"], "abcdefg");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "c", "-g", "d"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<R>c<E><G>d<E>efg\n");
         assert!(r.is_ok());
     }
     #[test]
     fn test_red_green_red() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "c", "-g", "d", "-r", "e"], "abcdefg");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "c", "-g", "d", "-r", "e"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<R>c<E><G>d<E><R>e<E>fg\n");
         assert!(r.is_ok());
     }
 }
 
-mod test_2_more_s {
+mod test_2_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -394,8 +306,7 @@ mod test_2_more_s {
     //
     #[test]
     fn test_long_options() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["--red", "a", "--green", "b"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["--red", "a", "--green", "b"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>a<E><G>b<E>cde\n");
         assert!(r.is_ok());
@@ -403,8 +314,7 @@ mod test_2_more_s {
     //
     #[test]
     fn test_mix_short_long_options() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a", "--green", "b"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a", "--green", "b"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>a<E><G>b<E>cde\n");
         assert!(r.is_ok());
@@ -412,8 +322,7 @@ mod test_2_more_s {
     //
     #[test]
     fn test_no_matches() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "z"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "z"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "abcde\n");
         assert!(r.is_ok());
@@ -421,15 +330,14 @@ mod test_2_more_s {
     //
     #[test]
     fn test_utf8_chars() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "あ"], "あいうえお");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "あ"], "あいうえお");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>あ<E>いうえお\n");
         assert!(r.is_ok());
     }
 }
 
-mod test_3 {
+mod test_3_l {
     /*
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
@@ -442,7 +350,7 @@ mod test_3 {
     */
 }
 
-mod test_3_more {
+mod test_3_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -450,8 +358,7 @@ mod test_3_more {
     //
     #[test]
     fn test_single_capture_group() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a(b)c"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a(b)c"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "a<R>b<E>cde\n");
         assert!(r.is_ok());
@@ -459,8 +366,7 @@ mod test_3_more {
     //
     #[test]
     fn test_multiple_capture_groups() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a(b)c(d)"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a(b)c(d)"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "a<R>b<E>cde\n");
         assert!(r.is_ok());
@@ -468,8 +374,7 @@ mod test_3_more {
     //
     #[test]
     fn test_no_capture_group() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "abc"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "abc"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>abc<E>de\n");
         assert!(r.is_ok());
@@ -477,8 +382,7 @@ mod test_3_more {
     //
     #[test]
     fn test_nested_capture_groups() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a((b)c)d"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a((b)c)d"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "a<R>bc<E>de\n");
         assert!(r.is_ok());
@@ -486,8 +390,7 @@ mod test_3_more {
     //
     #[test]
     fn test_empty_capture_group() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a()c"], "acde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a()c"], "acde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "acde\n");
         assert!(r.is_ok());
@@ -495,8 +398,7 @@ mod test_3_more {
     //
     #[test]
     fn test_optional_capture_group_match() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a(b)?c"], "abcde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a(b)?c"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "a<R>b<E>cde\n");
         assert!(r.is_ok());
@@ -504,15 +406,14 @@ mod test_3_more {
     //
     #[test]
     fn test_optional_capture_group_no_match() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a(b)?c"], "acde");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a(b)?c"], "acde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "acde\n");
         assert!(r.is_ok());
     }
 }
 
-mod test_4_more {
+mod test_4_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -520,8 +421,7 @@ mod test_4_more {
     //
     #[test]
     fn test_invalid_regex() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "*"], "");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "*"], "");
         assert!(buff!(sioe, serr).contains("regex parse error"));
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_err());
@@ -534,8 +434,7 @@ mod test_4_more {
             large_input.push_str(&format!("line {} abc\n", i));
         }
         //
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "abc"], &large_input);
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "abc"], &large_input);
         //
         let mut expected_output = String::new();
         for i in 0..1000 {
@@ -554,9 +453,8 @@ mod test_4_more {
             large_input.push_str(&format!("line {} abcdefghijklmnopqrstuvwxyz\n", i));
         }
         //
-        let env = env_1!();
         let start = std::time::Instant::now();
-        let (r, sioe) = do_execute!(&env, ["-r", "[a-z]+"], &large_input);
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "[a-z]+"], &large_input);
         let duration = start.elapsed();
         //
         assert_eq!(buff!(sioe, serr), "");
@@ -565,7 +463,7 @@ mod test_4_more {
     }
 }
 
-mod test_5_more {
+mod test_5_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
@@ -574,10 +472,10 @@ mod test_5_more {
     #[test]
     fn test_env_override() {
         let mut env = env_1!();
-        env.color_seq_red_start = "[RED]".to_string();
-        env.color_seq_end = "[/RED]".to_string();
+        env.push(("AKI_MCOLOR_COLOR_SEQ_RED_ST", "[RED]"));
+        env.push(("AKI_MCOLOR_COLOR_SEQ_ED", "[/RED]"));
         //
-        let (r, sioe) = do_execute!(&env, ["-r", "a"], "abcde");
+        let (r, sioe) = do_execute!(env, ["-r", "a"], "abcde");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "[RED]a[/RED]bcde\n");
         assert!(r.is_ok());
@@ -585,8 +483,7 @@ mod test_5_more {
     //
     #[test]
     fn test_crlf_line_endings() {
-        let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a"], "abc\r\ndefa");
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a"], "abc\r\ndefa");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "<R>a<E>bc\ndef<R>a<E>\n");
         assert!(r.is_ok());
@@ -601,7 +498,7 @@ mod test_5_more {
         f.read_to_end(&mut buffer).unwrap();
         //
         let env = env_1!();
-        let (r, sioe) = do_execute!(&env, ["-r", "a"], &buffer);
+        let (r, sioe) = do_execute!(env_1!(), ["-r", "a"], &buffer);
         //
         assert!(buff!(sioe, sout).contains("stream did not contain valid UTF-8"));
         assert_eq!(buff!(sioe, serr), "");
