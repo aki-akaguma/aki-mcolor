@@ -8,7 +8,6 @@ mod test_0_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::*;
-    use std::io::Write;
     //
     #[test]
     fn test_help() {
@@ -116,7 +115,6 @@ mod test_1_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_red() {
@@ -161,17 +159,11 @@ mod test_1_l {
         assert!(r.is_ok());
     }
     //
-    /*
     #[test]
     fn test_invalid_utf8() {
-        let v = {
-            use std::io::Read;
-            let mut f = std::fs::File::open(fixture_invalid_utf8!()).unwrap();
-            let mut v = Vec::new();
-            f.read_to_end(&mut v).unwrap();
-            v
-        };
-        let (r, sioe) = do_execute!(env_1!(), ["-r", "a"], &v);
+        let v = std::fs::read(fixture_invalid_utf8!()).unwrap();
+        let s = unsafe { String::from_utf8_unchecked(v) };
+        let (r, sioe) = do_execute!(["-r", "a"], &s);
         assert_eq!(
             buff!(sioe, serr),
             concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
@@ -179,14 +171,12 @@ mod test_1_l {
         assert_eq!(buff!(sioe, sout), "");
         assert!(r.is_err());
     }
-    */
 }
 
 mod test_1_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_unmark() {
@@ -280,7 +270,6 @@ mod test_2_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_red_green() {
@@ -302,7 +291,6 @@ mod test_2_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_long_options() {
@@ -341,7 +329,6 @@ mod test_3_l {
     /*
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
-    use std::io::Write;
     //
      * can NOT test
     #[test]
@@ -354,7 +341,6 @@ mod test_3_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_single_capture_group() {
@@ -417,7 +403,6 @@ mod test_4_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_invalid_regex() {
@@ -467,7 +452,6 @@ mod test_5_more_l {
     use libaki_mcolor::*;
     use runnel::medium::stringio::{StringErr, StringIn, StringOut};
     use runnel::RunnelIoe;
-    use std::io::Write;
     //
     #[test]
     fn test_env_override() {

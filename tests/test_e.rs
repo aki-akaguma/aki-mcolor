@@ -111,48 +111,48 @@ mod test_1_e {
     //
     #[test]
     fn test_red() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "c"], env, b"abcdefg" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "c"], env_1!(), b"abcdefg" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ab<R>c<E>defg\n");
         assert!(oup.status.success());
     }
     #[test]
     fn test_green() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-g", "c"], env, b"abcdefg" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-g", "c"], env_1!(), b"abcdefg" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ab<G>c<E>defg\n");
         assert!(oup.status.success());
     }
     #[test]
     fn test_blue() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-b", "c"], env, b"abcdefg" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-b", "c"], env_1!(), b"abcdefg" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ab<B>c<E>defg\n");
         assert!(oup.status.success());
     }
     #[test]
     fn test_cyan() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-c", "c"], env, b"abcdefg" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-c", "c"], env_1!(), b"abcdefg" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ab<C>c<E>defg\n");
         assert!(oup.status.success());
     }
     #[test]
     fn test_magenda() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-m", "c"], env, b"abcdefg" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-m", "c"], env_1!(), b"abcdefg" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ab<M>c<E>defg\n");
         assert!(oup.status.success());
     }
     #[test]
     fn test_yellow() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-y", "c"], env, b"abcdefg" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-y", "c"], env_1!(), b"abcdefg" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "ab<Y>c<E>defg\n");
         assert!(oup.status.success());
@@ -160,15 +160,8 @@ mod test_1_e {
     //
     #[test]
     fn test_invalid_utf8() {
-        let v = {
-            use std::io::Read;
-            let mut f = std::fs::File::open(fixture_invalid_utf8!()).unwrap();
-            let mut v = Vec::new();
-            f.read_to_end(&mut v).unwrap();
-            v
-        };
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env, &v);
+        let v = std::fs::read(fixture_invalid_utf8!()).unwrap();
+        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env_1!(), &v);
         assert_eq!(
             oup.stderr,
             concat!(program_name!(), ": stream did not contain valid UTF-8\n",)
@@ -184,11 +177,10 @@ mod test_1_more_e {
     //
     #[test]
     fn test_unmark() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-r", "a.c", "-u", "b"],
-            env,
+            env_1!(),
             b"abcde" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -198,11 +190,10 @@ mod test_1_more_e {
     //
     #[test]
     fn test_multiple_colors_same_line() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-r", "a", "-g", "b", "-b", "c"],
-            env,
+            env_1!(),
             b"abcde" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -212,8 +203,8 @@ mod test_1_more_e {
     //
     #[test]
     fn test_pattern_not_found() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "z"], env, b"abcde" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "z"], env_1!(), b"abcde" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abcde\n");
         assert!(oup.status.success());
@@ -221,8 +212,7 @@ mod test_1_more_e {
     //
     #[test]
     fn test_empty_input() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env, b"" as &[u8]);
+        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env_1!(), b"" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "");
         assert!(oup.status.success());
@@ -230,8 +220,8 @@ mod test_1_more_e {
     //
     #[test]
     fn test_pattern_at_beginning() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env, b"abcde" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env_1!(), b"abcde" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<R>a<E>bcde\n");
         assert!(oup.status.success());
@@ -239,8 +229,8 @@ mod test_1_more_e {
     //
     #[test]
     fn test_pattern_at_end() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "e"], env, b"abcde" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "e"], env_1!(), b"abcde" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abcd<R>e<E>\n");
         assert!(oup.status.success());
@@ -248,8 +238,12 @@ mod test_1_more_e {
     //
     #[test]
     fn test_multiple_lines() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env, b"abc\ndefa" as &[u8]);
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "a"],
+            env_1!(),
+            b"abc\ndefa" as &[u8],
+        );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<R>a<E>bc\ndef<R>a<E>\n");
         assert!(oup.status.success());
@@ -257,13 +251,12 @@ mod test_1_more_e {
     //
     #[test]
     fn test_all_colors() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             [
                 "-r", "a", "-g", "b", "-b", "c", "-c", "d", "-m", "e", "-y", "f", "-u", "g",
             ],
-            env,
+            env_1!(),
             b"abcdefg" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -273,11 +266,10 @@ mod test_1_more_e {
     //
     #[test]
     fn test_overlapping_matches() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-r", "ab", "-g", "bc"],
-            env,
+            env_1!(),
             b"abcde" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -287,11 +279,10 @@ mod test_1_more_e {
     //
     #[test]
     fn test_complex_regex() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-r", "a[bc]d"],
-            env,
+            env_1!(),
             b"abde abd acde" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -307,11 +298,10 @@ mod test_2_e {
     //
     #[test]
     fn test_red_green() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-r", "c", "-g", "d"],
-            env,
+            env_1!(),
             b"abcdefg" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -320,11 +310,10 @@ mod test_2_e {
     }
     #[test]
     fn test_red_green_red() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-r", "c", "-g", "d", "-r", "e"],
-            env,
+            env_1!(),
             b"abcdefg" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -339,11 +328,10 @@ mod test_2_more_e {
     //
     #[test]
     fn test_long_options() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["--red", "a", "--green", "b"],
-            env,
+            env_1!(),
             b"abcde" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -353,11 +341,10 @@ mod test_2_more_e {
     //
     #[test]
     fn test_mix_short_long_options() {
-        let env = env_1!();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-r", "a", "--green", "b"],
-            env,
+            env_1!(),
             b"abcde" as &[u8],
         );
         assert_eq!(oup.stderr, "");
@@ -367,8 +354,8 @@ mod test_2_more_e {
     //
     #[test]
     fn test_no_matches() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "z"], env, b"abcde" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "z"], env_1!(), b"abcde" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "abcde\n");
         assert!(oup.status.success());
@@ -376,9 +363,12 @@ mod test_2_more_e {
     //
     #[test]
     fn test_utf8_chars() {
-        let env = env_1!();
-        let oup =
-            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "あ"], env, "あいうえお".as_bytes());
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "あ"],
+            env_1!(),
+            "あいうえお".as_bytes(),
+        );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<R>あ<E>いうえお\n");
         assert!(oup.status.success());
@@ -409,8 +399,12 @@ mod test_3_more_e {
     //
     #[test]
     fn test_single_capture_group() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a(b)c"], env, b"abcde" as &[u8]);
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "a(b)c"],
+            env_1!(),
+            b"abcde" as &[u8],
+        );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "a<R>b<E>cde\n");
         assert!(oup.status.success());
@@ -418,9 +412,12 @@ mod test_3_more_e {
     //
     #[test]
     fn test_multiple_capture_groups() {
-        let env = env_1!();
-        let oup =
-            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a(b)c(d)"], env, b"abcde" as &[u8]);
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "a(b)c(d)"],
+            env_1!(),
+            b"abcde" as &[u8],
+        );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "a<R>b<E>cde\n");
         assert!(oup.status.success());
@@ -428,8 +425,8 @@ mod test_3_more_e {
     //
     #[test]
     fn test_no_capture_group() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "abc"], env, b"abcde" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "abc"], env_1!(), b"abcde" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<R>abc<E>de\n");
         assert!(oup.status.success());
@@ -437,9 +434,12 @@ mod test_3_more_e {
     //
     #[test]
     fn test_nested_capture_groups() {
-        let env = env_1!();
-        let oup =
-            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a((b)c)d"], env, b"abcde" as &[u8]);
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "a((b)c)d"],
+            env_1!(),
+            b"abcde" as &[u8],
+        );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "a<R>bc<E>de\n");
         assert!(oup.status.success());
@@ -447,8 +447,8 @@ mod test_3_more_e {
     //
     #[test]
     fn test_empty_capture_group() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a()c"], env, b"acde" as &[u8]);
+        let oup =
+            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a()c"], env_1!(), b"acde" as &[u8]);
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "acde\n");
         assert!(oup.status.success());
@@ -456,9 +456,12 @@ mod test_3_more_e {
     //
     #[test]
     fn test_optional_capture_group_match() {
-        let env = env_1!();
-        let oup =
-            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a(b)?c"], env, b"abcde" as &[u8]);
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "a(b)?c"],
+            env_1!(),
+            b"abcde" as &[u8],
+        );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "a<R>b<E>cde\n");
         assert!(oup.status.success());
@@ -466,8 +469,12 @@ mod test_3_more_e {
     //
     #[test]
     fn test_optional_capture_group_no_match() {
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a(b)?c"], env, b"acde" as &[u8]);
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "a(b)?c"],
+            env_1!(),
+            b"acde" as &[u8],
+        );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "acde\n");
         assert!(oup.status.success());
@@ -480,8 +487,7 @@ mod test_4_more_e {
     //
     #[test]
     fn test_invalid_regex() {
-        let env = env_1!();
-        let oup = exec_target_with_env(TARGET_EXE_PATH, ["-r", "*"], env);
+        let oup = exec_target_with_env(TARGET_EXE_PATH, ["-r", "*"], env_1!());
         assert!(oup.stderr.contains("regex parse error"));
         assert_eq!(oup.stdout, "");
         assert!(!oup.status.success());
@@ -494,9 +500,12 @@ mod test_4_more_e {
             large_input.push_str(&format!("line {} abc\n", i));
         }
         //
-        let env = env_1!();
-        let oup =
-            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "abc"], env, large_input.as_bytes());
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "abc"],
+            env_1!(),
+            large_input.as_bytes(),
+        );
         //
         let mut expected_output = String::new();
         for i in 0..1000 {
@@ -515,12 +524,11 @@ mod test_4_more_e {
             large_input.push_str(&format!("line {} abcdefghijklmnopqrstuvwxyz\n", i));
         }
         //
-        let env = env_1!();
         let start = std::time::Instant::now();
         let oup = exec_target_with_env_in(
             TARGET_EXE_PATH,
             ["-r", "[a-z]+"],
-            env,
+            env_1!(),
             large_input.as_bytes(),
         );
         let duration = start.elapsed();
@@ -551,9 +559,12 @@ mod test_5_more_e {
     //
     #[test]
     fn test_crlf_line_endings() {
-        let env = env_1!();
-        let oup =
-            exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env, b"abc\r\ndefa" as &[u8]);
+        let oup = exec_target_with_env_in(
+            TARGET_EXE_PATH,
+            ["-r", "a"],
+            env_1!(),
+            b"abc\r\ndefa" as &[u8],
+        );
         assert_eq!(oup.stderr, "");
         assert_eq!(oup.stdout, "<R>a<E>bc\ndef<R>a<E>\n");
         assert!(oup.status.success());
@@ -565,8 +576,7 @@ mod test_5_more_e {
         let mut buffer = Vec::new();
         f.read_to_end(&mut buffer).unwrap();
         //
-        let env = env_1!();
-        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env, &buffer);
+        let oup = exec_target_with_env_in(TARGET_EXE_PATH, ["-r", "a"], env_1!(), &buffer);
         //
         assert!(oup.stderr.contains("stream did not contain valid UTF-8"));
         assert_eq!(oup.stdout, "");
