@@ -28,14 +28,27 @@ enum CmdOp {
     UcX,
 }
 
-impl std::convert::From<u8> for CmdOp {
-    fn from(value: u8) -> Self {
-        unsafe { std::mem::transmute(value) }
-    }
-}
 impl CmdOp {
     pub const fn to(self) -> OptNum {
         self as OptNum
+    }
+}
+
+impl std::convert::From<u8> for CmdOp {
+    fn from(value: u8) -> Self {
+        match value {
+            0 => CmdOp::Red,
+            1 => CmdOp::Green,
+            2 => CmdOp::Blue,
+            3 => CmdOp::Cyan,
+            4 => CmdOp::Magenda,
+            5 => CmdOp::Yellow,
+            6 => CmdOp::Unmark,
+            7 => CmdOp::Help,
+            8 => CmdOp::Version,
+            9 => CmdOp::UcX,
+            _ => unreachable!(),
+        }
     }
 }
 
@@ -84,17 +97,14 @@ impl flood_tide::HelpVersion for CmdOptConf {
     }
 }
 
-fn value_to_string(nv: &NameVal<'_>) -> Result<String, OptParseError> {
+fn value_to_type<T>(nv: &NameVal<'_>) -> Result<T, OptParseError>
+where
+    T: std::str::FromStr,
+    <T as std::str::FromStr>::Err: std::fmt::Display,
+{
     match nv.val {
-        Some(x) => Ok(x.to_string()),
-        None => Err(OptParseError::missing_option_argument(&nv.opt.lon_or_sho())),
-    }
-}
-
-fn value_to_opt_uc_x_param(nv: &NameVal<'_>) -> Result<OptUcXParam, OptParseError> {
-    match nv.val {
-        Some(s) => match FromStr::from_str(s) {
-            Ok(x) => Ok(x),
+        Some(x) => match x.parse::<T>() {
+            Ok(d) => Ok(d),
             Err(err) => Err(OptParseError::invalid_option_argument(
                 &nv.opt.lon_or_sho(),
                 &err.to_string(),
