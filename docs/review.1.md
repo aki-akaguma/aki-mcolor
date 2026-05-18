@@ -50,8 +50,8 @@ let (st, ed): (usize, usize) = match cap.get(usize::from(cap_len > 1)) {
 ```
 This allows coloring only the first capture group if one is provided (e.g., `aki-mcolor -r "a(b)c"` colors only 'b'). This is a powerful feature but is currently undocumented in the help text (`-H`). It is recommended to add a brief mention of this behavior to the user documentation.
 
-### 3.3. Spelling: "Magenda" vs. "Magenta"
-Throughout the codebase (enums, environment variables, struct fields), the word "Magenta" is spelled as "Magenda". While this is consistent within the project, it is technically a misspelling. Given it's already used in environment variables, changing it now might be a breaking change, but it's worth noting for future consistency with standard color names.
+### 3.3. Spelling: "Magenta" vs. "Magenta"
+Throughout the codebase (enums, environment variables, struct fields), the word "Magenta" is spelled as "Magenta". While this is consistent within the project, it is technically a misspelling. Given it's already used in environment variables, changing it now might be a breaking change, but it's worth noting for future consistency with standard color names.
 
 ### 3.4. Logic for "Last Match Wins"
 The design choice to let the last specified pattern override previous ones is implemented effectively by overwriting the `line_color_mark` buffer. This is intuitive for users who want to apply specific overrides.

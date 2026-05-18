@@ -3,7 +3,7 @@ Options:
   -g, --green <exp>     write it in green
   -b, --blue <exp>      write it in blue
   -c, --cyan <exp>      write it in cyan
-  -m, --magenda <exp>   write it in magenda
+  -m, --magenta <exp>   write it in magenta
   -y, --yellow <exp>    write it in yellow
   -u, --unmark <exp>    write it in non-color
 

@@ -12,8 +12,8 @@ match CmdOp::from(nv.opt.num) {
     CmdOp::Cyan => {
         conf.opt_cyan.push(value_to_type::<String>(nv)?);
     }
-    CmdOp::Magenda => {
-        conf.opt_magenda.push(value_to_type::<String>(nv)?);
+    CmdOp::Magenta => {
+        conf.opt_magenta.push(value_to_type::<String>(nv)?);
     }
     CmdOp::Yellow => {
         conf.opt_yellow.push(value_to_type::<String>(nv)?);

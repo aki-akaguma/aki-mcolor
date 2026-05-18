@@ -32,7 +32,7 @@ Options:
   -g, --green <exp>     write it in green
   -b, --blue <exp>      write it in blue
   -c, --cyan <exp>      write it in cyan
-  -m, --magenda <exp>   write it in magenda
+  -m, --magenta <exp>   write it in magenta
   -y, --yellow <exp>    write it in yellow
   -u, --unmark <exp>    write it in non-color
 
@@ -48,7 +48,7 @@ Environments:
   AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi
   AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi
   AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi
-  AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_MAGENTA_ST   magenta start sequence specified by ansi
   AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi
   AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi
 ```

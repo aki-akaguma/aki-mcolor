@@ -145,7 +145,7 @@ mod test_1_l {
         assert!(r.is_ok());
     }
     #[test]
-    fn test_magenda() {
+    fn test_magenta() {
         let (r, sioe) = do_execute!(env_1!(), ["-m", "c"], "abcdefg");
         assert_eq!(buff!(sioe, serr), "");
         assert_eq!(buff!(sioe, sout), "ab<M>c<E>defg\n");

@@ -142,7 +142,7 @@ mod test_1_e {
         assert!(oup.status.success());
     }
     #[test]
-    fn test_magenda() {
+    fn test_magenta() {
         let oup =
             exec_target_with_env_in(TARGET_EXE_PATH, ["-m", "c"], env_1!(), b"abcdefg" as &[u8]);
         assert_eq!(oup.stderr, "");

@@ -12,7 +12,7 @@ pub fn do_gen_src() -> anyhow::Result<()> {
                 "green" => (false, true, MetaType::String),
                 "blue" => (false, true, MetaType::String),
                 "cyan" => (false, true, MetaType::String),
-                "magenda" => (false, true, MetaType::String),
+                "magenta" => (false, true, MetaType::String),
                 "yellow" => (false, true, MetaType::String),
                 "unmark" => (false, true, MetaType::String),
                 //

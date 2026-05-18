@@ -16,7 +16,7 @@ macro_rules! help_msg {
               -g, --green <exp>     write it in green
               -b, --blue <exp>      write it in blue
               -c, --cyan <exp>      write it in cyan
-              -m, --magenda <exp>   write it in magenda
+              -m, --magenta <exp>   write it in magenta
               -y, --yellow <exp>    write it in yellow
               -u, --unmark <exp>    write it in non-color
 
@@ -33,7 +33,7 @@ macro_rules! help_msg {
               AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi
               AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi
               AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi
-              AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi
+              AKI_MCOLOR_COLOR_SEQ_MAGENTA_ST   magenta start sequence specified by ansi
               AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi
               AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi
             "#
@@ -101,7 +101,7 @@ macro_rules! env_1 {
             ("AKI_MCOLOR_COLOR_SEQ_GREEN_ST", "<G>"),
             ("AKI_MCOLOR_COLOR_SEQ_BLUE_ST", "<B>"),
             ("AKI_MCOLOR_COLOR_SEQ_CYAN_ST", "<C>"),
-            ("AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST", "<M>"),
+            ("AKI_MCOLOR_COLOR_SEQ_MAGENTA_ST", "<M>"),
             ("AKI_MCOLOR_COLOR_SEQ_YELLOW_ST", "<Y>"),
             ("AKI_MCOLOR_COLOR_SEQ_ED", "<E>"),
         ]

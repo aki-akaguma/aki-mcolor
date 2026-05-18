@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * minimum support rustc 1.68.0 (2c8cc3432 2023-03-06)
 
 ### Fixed
+* corrected misspelling of "Magenta" throughout the codebase (CLI options, environment variables, enums, etc.). This is a breaking change for users relying on the "Magenda" spelling.
 * `clippy::needless_borrow`
 
 ### Removed

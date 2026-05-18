@@ -35,7 +35,7 @@ pub enum Color {
     Green,
     Blue,
     Cyan,
-    Magenda,
+    Magenta,
     Yellow,
 }
 
@@ -64,7 +64,7 @@ static COLOR_RED_START: &str = "\u{1B}[1;31m";
 static COLOR_GREEN_START: &str = "\u{1B}[1;32m";
 static COLOR_BLUE_START: &str = "\u{1B}[1;34m";
 static COLOR_CYAN_START: &str = "\u{1B}[1;36m";
-static COLOR_MAGENDA_START: &str = "\u{1B}[1;35m";
+static COLOR_MAGENTA_START: &str = "\u{1B}[1;35m";
 static COLOR_YELLOW_START: &str = "\u{1B}[1;33m";
 static COLOR_END: &str = "\u{1B}[0m";
 
@@ -74,7 +74,7 @@ pub struct EnvConf {
     pub color_seq_green_start: String,
     pub color_seq_blue_start: String,
     pub color_seq_cyan_start: String,
-    pub color_seq_magenda_start: String,
+    pub color_seq_magenta_start: String,
     pub color_seq_yellow_start: String,
     pub color_seq_end: String,
 }
@@ -97,9 +97,9 @@ impl EnvConf {
             Ok(v) => v,
             Err(_) => String::from(COLOR_CYAN_START),
         };
-        let a_color_magenda_start = match env::var("AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST") {
+        let a_color_magenta_start = match env::var("AKI_MCOLOR_COLOR_SEQ_MAGENTA_ST") {
             Ok(v) => v,
-            Err(_) => String::from(COLOR_MAGENDA_START),
+            Err(_) => String::from(COLOR_MAGENTA_START),
         };
         let a_color_yellow_start = match env::var("AKI_MCOLOR_COLOR_SEQ_YELLOW_ST") {
             Ok(v) => v,
@@ -115,7 +115,7 @@ impl EnvConf {
             color_seq_green_start: a_color_green_start,
             color_seq_blue_start: a_color_blue_start,
             color_seq_cyan_start: a_color_cyan_start,
-            color_seq_magenda_start: a_color_magenda_start,
+            color_seq_magenta_start: a_color_magenta_start,
             color_seq_yellow_start: a_color_yellow_start,
             color_seq_end: a_color_end,
         }
@@ -149,8 +149,8 @@ where
                 "AKI_MCOLOR_COLOR_SEQ_CYAN_ST" => {
                     r.color_seq_cyan_start = a.1.as_ref().to_string_lossy().to_string();
                 }
-                "AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST" => {
-                    r.color_seq_magenda_start = a.1.as_ref().to_string_lossy().to_string();
+                "AKI_MCOLOR_COLOR_SEQ_MAGENTA_ST" => {
+                    r.color_seq_magenta_start = a.1.as_ref().to_string_lossy().to_string();
                 }
                 "AKI_MCOLOR_COLOR_SEQ_YELLOW_ST" => {
                     r.color_seq_yellow_start = a.1.as_ref().to_string_lossy().to_string();

@@ -23,7 +23,7 @@ const ENV_TEXT: &str = r#"Environments:
   AKI_MCOLOR_COLOR_SEQ_GREEN_ST     greep start sequence specified by ansi
   AKI_MCOLOR_COLOR_SEQ_BLUE_ST      blue start sequence specified by ansi
   AKI_MCOLOR_COLOR_SEQ_CYAN_ST      cyan start sequence specified by ansi
-  AKI_MCOLOR_COLOR_SEQ_MAGENDA_ST   magenda start sequence specified by ansi
+  AKI_MCOLOR_COLOR_SEQ_MAGENTA_ST   magenta start sequence specified by ansi
   AKI_MCOLOR_COLOR_SEQ_YELLOW_ST    yellow start sequence specified by ansi
   AKI_MCOLOR_COLOR_SEQ_ED           color end sequence specified by ansi
 "#;
@@ -138,7 +138,7 @@ pub fn parse_cmdopts(a_prog_name: &str, args: &[&str]) -> Result<CmdOptConf, Opt
             && conf.opt_green.is_empty()
             && conf.opt_blue.is_empty()
             && conf.opt_cyan.is_empty()
-            && conf.opt_magenda.is_empty()
+            && conf.opt_magenta.is_empty()
             && conf.opt_yellow.is_empty()
             && conf.opt_unmark.is_empty()
         {

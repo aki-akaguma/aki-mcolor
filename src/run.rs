@@ -24,7 +24,7 @@ pub fn run(sioe: &RunnelIoe, conf: &CmdOptConf, env: &EnvConf) -> anyhow::Result
     make_color_and_regex!(colregs, &conf.opt_green, Color::Green);
     make_color_and_regex!(colregs, &conf.opt_blue, Color::Blue);
     make_color_and_regex!(colregs, &conf.opt_cyan, Color::Cyan);
-    make_color_and_regex!(colregs, &conf.opt_magenda, Color::Magenda);
+    make_color_and_regex!(colregs, &conf.opt_magenta, Color::Magenta);
     make_color_and_regex!(colregs, &conf.opt_yellow, Color::Yellow);
     make_color_and_regex!(colregs, &conf.opt_unmark, Color::None);
     //
@@ -50,7 +50,7 @@ impl<'a> ColorSeq<'a> {
             Color::Green => self.env.color_seq_green_start.as_str(),
             Color::Blue => self.env.color_seq_blue_start.as_str(),
             Color::Cyan => self.env.color_seq_cyan_start.as_str(),
-            Color::Magenda => self.env.color_seq_magenda_start.as_str(),
+            Color::Magenta => self.env.color_seq_magenta_start.as_str(),
             Color::Yellow => self.env.color_seq_yellow_start.as_str(),
         }
     }
