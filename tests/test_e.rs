@@ -497,7 +497,7 @@ mod test_4_more_e {
     fn test_large_input() {
         let mut large_input = String::new();
         for i in 0..1000 {
-            large_input.push_str(&format!("line {} abc\n", i));
+            large_input.push_str(&format!("line {i} abc\n"));
         }
         //
         let oup = exec_target_with_env_in(
@@ -509,7 +509,7 @@ mod test_4_more_e {
         //
         let mut expected_output = String::new();
         for i in 0..1000 {
-            expected_output.push_str(&format!("line {} <R>abc<E>\n", i));
+            expected_output.push_str(&format!("line {i} <R>abc<E>\n"));
         }
         //
         assert_eq!(oup.stderr, "");
@@ -521,7 +521,7 @@ mod test_4_more_e {
     fn test_performance() {
         let mut large_input = String::new();
         for i in 0..1000 {
-            large_input.push_str(&format!("line {} abcdefghijklmnopqrstuvwxyz\n", i));
+            large_input.push_str(&format!("line {i} abcdefghijklmnopqrstuvwxyz\n"));
         }
         //
         let start = std::time::Instant::now();

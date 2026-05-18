@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * corrected misspelling of "Magenta" throughout the codebase (CLI options, environment variables, enums, etc.). This is a breaking change for users relying on the "Magenda" spelling.
+* `clippy::uninlined-format-args`
 * `clippy::needless_borrow`
 
 ### Removed
