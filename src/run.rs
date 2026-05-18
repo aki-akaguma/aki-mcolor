@@ -66,14 +66,17 @@ fn do_match_proc(
     colregs: &[ColorAndRegex],
 ) -> anyhow::Result<()> {
     let color_seq = ColorSeq::new(env);
+    let mut line_color_mark: Vec<Color> = Vec::with_capacity(256);
+    let mut out_s = String::with_capacity(256);
+    //
     for line in sioe.pg_in().lines() {
         let line_s = line?;
         let line_ss = line_s.as_str();
         //
-        let (b_found, line_color_mark) = make_line_color_mark(colregs, line_ss)?;
+        let b_found = fill_line_color_mark(colregs, line_ss, &mut line_color_mark)?;
         if b_found {
-            let out_s = make_out_s(&color_seq, line_ss, &line_color_mark)?;
-            sioe.pg_out().write_line(out_s)?;
+            fill_out_s(&color_seq, line_ss, &line_color_mark, &mut out_s)?;
+            sioe.pg_out().write_line(out_s.clone())?;
         } else {
             sioe.pg_out().write_line(line_s)?;
         }
@@ -83,12 +86,13 @@ fn do_match_proc(
     Ok(())
 }
 
-fn make_line_color_mark(
+fn fill_line_color_mark(
     colregs: &[ColorAndRegex],
     line_ss: &str,
-) -> anyhow::Result<(bool, Vec<Color>)> {
+    line_color_mark: &mut Vec<Color>,
+) -> anyhow::Result<bool> {
     let line_len: usize = line_ss.len();
-    let mut line_color_mark: Vec<Color> = Vec::with_capacity(line_len);
+    line_color_mark.clear();
     line_color_mark.resize(line_len, Color::None);
     let mut b_found = false;
     //
@@ -108,22 +112,19 @@ fn make_line_color_mark(
             }
         }
     }
-    Ok((b_found, line_color_mark))
+    Ok(b_found)
 }
 
-fn make_out_s(
+fn fill_out_s(
     color_seq: &ColorSeq,
     line_ss: &str,
     line_color_mark: &[Color],
-) -> anyhow::Result<String> {
-    /*
-    let color_start_s = "<S>";
-    let color_end_s = "<E>";
-    */
+    out_s: &mut String,
+) -> anyhow::Result<()> {
     let color_end_s = color_seq.color_seq_end();
     let line_len: usize = line_ss.len();
     //
-    let mut out_s: String = String::new();
+    out_s.clear();
     let mut color = Color::None;
     let mut st: usize = 0;
     loop {
@@ -148,5 +149,5 @@ fn make_out_s(
         st = next_pos;
         color = line_color_mark[st];
     }
-    Ok(out_s)
+    Ok(())
 }
