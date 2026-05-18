@@ -25,7 +25,8 @@ macro_rules! help_msg {
               -X <x-options>    x options. try -X help
 
             Option Parameters:
-              <exp>     regular expression, color the entire match. 
+              <exp>     regular expression. Colors the entire match, or the first
+                        capture group if one is provided.
 
             Environments:
               AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi

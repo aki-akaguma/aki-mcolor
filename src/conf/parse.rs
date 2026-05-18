@@ -14,7 +14,8 @@ const DESCRIPTIONS_TEXT: &str = r#"
 mark up text with color
 "#;
 const PARAMS_TEXT: &str = r#"Option Parameters:
-  <exp>     regular expression, color the entire match. 
+  <exp>     regular expression. Colors the entire match, or the first
+            capture group if one is provided.
 "#;
 //const ARGUMENTS_TEXT: &str = r#""#;
 const ENV_TEXT: &str = r#"Environments:

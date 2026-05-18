@@ -13,7 +13,7 @@ the mark up text with color program.
 ## Features
 
 - mark up text with color.
-- minimum support rustc 1.65.0 (897e37553 2022-11-02)
+- minimum support rustc 1.68.0 (2c8cc3432 2023-03-06)
 
 ## Command help
 
@@ -40,7 +40,8 @@ Options:
   -V, --version     display version information and exit
 
 Option Parameters:
-  <exp>     regular expression, color the entire match.
+  <exp>     regular expression. Colors the entire match, or the first
+            capture group if one is provided.
 
 Environments:
   AKI_MCOLOR_COLOR_SEQ_RED_ST       red start sequence specified by ansi
