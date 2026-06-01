@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * reorganize existing code review files into `docs/reviews/` directory and adopt a new `YYYY-MM-DD_code_review.N.md` naming convention.
+* remove stale, commented-out test code in `src/util/opt_uc_x_param.rs`.
 
 
 ## [0.2.1] (2026-05-18)
