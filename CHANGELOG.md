@@ -1,5 +1,4 @@
 # Changelog: aki-mcolor
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -9,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New code review report: `docs/reviews/2026-06-01_code_review.3.md`.
+- Document `docs/reviews/2026-06-01_code_review.3.md`.
 
 ### Changed
 
@@ -21,15 +20,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Refactor core processing logic to reuse memory buffers for line-by-line processing, reducing heap allocations and improving performance.
-- Officially document the capture group coloring feature, where parentheses can be used to color only a specific part of a match.
+- Document capture group coloring feature, where parentheses can be used to color only a specific part of a match.
 - Update crates: `flood-tide` (0.2.14), `flood-tide-gen` (0.2.2).
 - Update crates: `runnel` (0.4.2), `regex` (1.12).
 - Update MSRV to 1.68.0 (2c8cc3432 2023-03-06).
 
 ### Fixed
 
-- Correct misspelling of "Magenta" throughout the codebase (CLI options, environment variables, enums, etc.). This is a breaking change for users relying on the "Magenda" spelling.
-- Fix Clippy warnings: `uninlined-format-args`, `needless_borrow`.
+- Correct misspelling of "Magenta" throughout the codebase (CLI options, environment variables, enums, etc.).
+- Resolve Clippy warnings: `uninlined-format-args`, `needless_borrow`.
 
 ### Removed
 
@@ -40,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `specs` directory.
-- More tests.
+- Additional tests.
 - `execute_with_env()` function.
 
 ### Changed
@@ -51,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Minimum support version in documentation.
+- Update minimum supported version in documentation.
 
 ### Removed
 
@@ -77,7 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Update `LICENSE-APACHE` and `LICENSE-MIT` files.
-- Fix Clippy warnings: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`, `uninlined_format_args`, `unused_imports`, `derivable_impls`.
+- Resolve Clippy warnings: `redundant_static_lifetimes`, `needless_borrow`, `bool_assert_comparison`, `uninlined_format_args`, `unused_imports`, `derivable_impls`.
 - Update MSRV from 1.56.0 to 1.65.0.
 
 ### Removed
@@ -97,7 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix Clippy warnings: `PartialEq` without `Eq`, `bool_to_int_with_if`, `uninlined_format_args`.
+- Resolve Clippy warnings: `PartialEq` without `Eq`, `bool_to_int_with_if`, `uninlined_format_args`.
 
 ## [0.1.30] - 2022-06-27
 
@@ -123,7 +122,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- More documentation.
+- Additional documentation.
 
 ### Changed
 
@@ -138,7 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Fix Cargo Clippy warnings.
+- Resolve Cargo Clippy warnings.
 - Update dependencies: `anyhow` (1.0.43), `flood-tide-gen` (0.1.14), `flood-tide` (0.2.3), `memx-cdy` (0.1.6), `runnel` (0.3.8), `exec-target` (0.2.3).
 - Rewrite `TARGET_EXE_PATH` using `env!(concat!("CARGO_BIN_EXE_", env!("CARGO_PKG_NAME")))`.
 
@@ -154,7 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix bug in `#[cfg(feature = "debian_build")]`.
+- Correct bug in `#[cfg(feature = "debian_build")]`.
 
 ## [0.1.24] - 2021-06-03
 
@@ -168,13 +167,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix bug in `-X rust-version-info` command option.
+- Correct bug in `-X rust-version-info` command option.
 
 ## [0.1.23] - 2021-04-23
 
 ### Fixed
 
-- Fix bug in `build.rs`.
+- Correct bug in `build.rs`.
 
 ## [0.1.22] - 2021-04-23
 
@@ -203,8 +202,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `execute_env()` and changes in handling of environments.
-- Some tests.
-- Some contents to `--help`.
+- Additional tests.
+- Additional content to `--help`.
 
 ### Changed
 
@@ -235,7 +234,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- More documentation.
+- Additional documentation.
 
 ### Changed
 
@@ -251,25 +250,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fix bug: Add `flush()` on finish.
+- Correct bug: Add `flush()` on finish.
 
 ## [0.1.13] - 2021-02-17
 
 ### Fixed
 
-- Fix documentation bug: Output image.
+- Correct documentation bug: Output image.
 
 ## [0.1.12] - 2021-02-16
 
 ### Fixed
 
-- Fix documentation bug: Color image.
+- Correct documentation bug: Color image.
 
 ## [0.1.11] - 2021-02-16
 
 ### Added
 
-- More documentation.
+- Additional documentation.
 
 ### Changed
 
